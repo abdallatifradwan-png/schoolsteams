@@ -5,32 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>منصة إصدار البطاقات التعريفية للمدارس</title>
     
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- FontAwesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Google Fonts (Cairo for professional Arabic typography) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- SheetJS for Excel Parsing -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    
-    <!-- QRCode.js for generating QR codes -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Cairo', 'sans-serif'],
-                    },
+                    fontFamily: { sans: ['Cairo', 'sans-serif'] },
                     colors: {
-                        primary: '#046c4e', // Emerald 700 - Official Green
-                        secondary: '#1e293b', // Slate 800 - Text
-                        accent: '#d97706', // Amber 600 - Highlights
+                        primary: '#164e63', // Deep Cyan/Blue for professional look
+                        secondary: '#1e293b',
+                        accent: '#854d0e', // Darker Amber
                     }
                 }
             }
@@ -38,527 +27,336 @@
     </script>
 
     <style>
-        body {
-            background-color: #f1f5f9;
+        @media screen {
+            body { background-color: #f8fafc; }
+            .card-container { max-width: 900px; margin: 0 auto; }
         }
 
-        /* Print Specific Styles */
+        /* Essential Print Optimization */
         @media print {
+            @page {
+                size: A4 portrait;
+                margin: 0; /* Remove browser default margins */
+            }
             body {
-                background-color: white;
-            }
-            #controls-section, #header-section, #instructions {
-                display: none !important;
-            }
-            #printable-card {
-                box-shadow: none !important;
-                border: none !important;
+                background: white !important;
                 margin: 0 !important;
-                width: 100% !important;
-                max-width: 100% !important;
-                page-break-after: avoid;
-            }
-            /* Force background colors and images to print */
-            .print-exact {
+                padding: 0 !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
-            /* Hide the "Demo Badge" when printing */
-            .demo-badge {
+            #controls-section, #header-section, #instructions, .demo-badge {
                 display: none !important;
             }
-            @page {
-                size: A4;
-                margin: 10mm;
+            #printable-card {
+                width: 210mm !important;
+                height: 297mm !important;
+                margin: 0 !important;
+                padding: 15mm !important;
+                border: none !important;
+                box-shadow: none !important;
+                border-radius: 0 !important;
+                display: flex !important;
+                flex-direction: column !important;
             }
+            .no-print { display: none !important; }
         }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-        
-        .pulse-border {
-            animation: pulse-border 2s infinite;
+        .section-header {
+            border-right: 4px solid #164e63;
+            padding-right: 12px;
+            margin-bottom: 12px;
+            font-weight: 800;
+            color: #164e63;
         }
-        @keyframes pulse-border {
-            0% { border-color: #3b82f6; box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
-            70% { border-color: #60a5fa; box-shadow: 0 0 0 6px rgba(59, 130, 246, 0); }
-            100% { border-color: #3b82f6; box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+
+        .data-box {
+            background-color: #fcfcfc;
+            border: 1px solid #e2e8f0;
+            padding: 12px;
+            border-radius: 6px;
         }
     </style>
 </head>
-<body class="text-secondary font-sans min-h-screen flex flex-col">
+<body class="text-slate-800 font-sans">
 
-    <!-- Header (Hidden in Print) -->
-    <header id="header-section" class="bg-primary text-white shadow-md py-4">
-        <div class="container mx-auto px-4 flex items-center justify-between">
+    <!-- Header (Screen Only) -->
+    <header id="header-section" class="bg-primary text-white py-4 shadow-lg no-print">
+        <div class="container mx-auto px-4 flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <i class="fas fa-school text-3xl"></i>
-                <h1 class="text-2xl font-bold">نظام إصدار البطاقات التعريفية للمدارس</h1>
+                <i class="fas fa-id-card text-2xl"></i>
+                <h1 class="text-xl font-bold">إصدار بطاقات المدارس التعريفية</h1>
             </div>
-            <div class="text-sm opacity-80 hidden md:block">مدعوم بتقنيات الذكاء الاصطناعي وإدارة البيانات</div>
+            <button onclick="loadDemoData()" class="bg-white/10 hover:bg-white/20 px-4 py-1.5 rounded-lg text-sm transition-all border border-white/30">
+                تحميل النموذج الافتراضي
+            </button>
         </div>
     </header>
 
-    <main class="container mx-auto px-4 py-8 flex-grow">
+    <main class="container mx-auto px-4 py-8">
         
-        <!-- Controls Section -->
-        <section id="controls-section" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
-            <div class="flex justify-between items-center mb-4 pb-2 border-b">
-                <h2 class="font-bold text-lg text-gray-800">لوحة التحكم وإدخال البيانات</h2>
-                <button onclick="loadDemoData()" class="text-sm bg-blue-50 text-blue-600 hover:bg-blue-100 px-3 py-1 rounded border border-blue-200 transition-colors">
-                    <i class="fas fa-eye mr-1"></i> عرض النموذج التوضيحي
-                </button>
-            </div>
-            
+        <!-- Controls (Screen Only) -->
+        <section id="controls-section" class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 mb-8 no-print">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
-                
-                <!-- File Upload -->
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">1. رفع ملف البيانات (Excel)</label>
-                    <div class="flex items-center justify-center w-full">
-                        <label for="excel-file" class="flex flex-col items-center justify-center w-full h-12 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors pulse-border" id="upload-label">
-                            <div class="flex items-center justify-center gap-2 px-4">
-                                <i class="fas fa-file-excel text-green-600 text-xl"></i>
-                                <span class="text-sm text-gray-600 font-semibold truncate max-w-[200px]" id="file-name">انقر هنا لرفع ملف .xlsx</span>
-                            </div>
-                            <input id="excel-file" type="file" class="hidden" accept=".xlsx, .xls" />
-                        </label>
-                    </div>
+                    <label class="block text-sm font-bold text-slate-700 mb-2">1. ملف البيانات</label>
+                    <input id="excel-file" type="file" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-cyan-900 cursor-pointer border rounded-md" accept=".xlsx, .xls" />
                 </div>
-
-                <!-- School Selection -->
-                <div id="school-selector-container" class="transition-opacity duration-300">
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">2. اختر المدرسة</label>
-                    <select id="school-select" class="block w-full h-12 px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg focus:border-primary focus:ring-primary focus:outline-none focus:ring focus:ring-opacity-40">
-                        <option value="demo" selected>النموذج التوضيحي (للمعاينة)</option>
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-2">2. اختيار المدرسة</label>
+                    <select id="school-select" class="w-full border p-2 rounded-md focus:ring-2 focus:ring-primary outline-none">
+                        <option value="demo">-- المعاينة الافتراضية --</option>
                     </select>
                 </div>
-
-                <!-- Print Action -->
-                <div id="action-container" class="transition-opacity duration-300">
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">3. الإجراءات</label>
-                    <button onclick="window.print()" class="w-full h-12 bg-primary hover:bg-green-800 text-white font-bold py-2 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-2">
-                        <i class="fas fa-print"></i>
-                        <span>طباعة / حفظ كـ PDF</span>
+                <div>
+                    <button onclick="window.print()" class="w-full bg-primary text-white font-bold py-2 rounded-md hover:bg-cyan-900 shadow-md flex items-center justify-center gap-2">
+                        <i class="fas fa-download"></i> تصدير للطباعة (PDF)
                     </button>
                 </div>
-
             </div>
         </section>
 
-        <!-- Instructions Guide -->
-        <div id="instructions" class="bg-amber-50 border-r-4 border-amber-500 p-4 rounded mb-8 text-sm text-amber-900 shadow-sm">
-            <div class="font-bold mb-1"><i class="fas fa-info-circle"></i> تنويه للمدراء لإعداد ملف الإكسل:</div>
-            البطاقة المعروضة أدناه هي <strong>نموذج توضيحي</strong> يظهر كيف ستنعكس بياناتكم. يرجى تجهيز ملف الإكسل بحيث يحتوي الصف الأول على العناوين التالية لضمان القراءة الآلية:
-            <div class="mt-2 flex flex-wrap gap-1">
-                <span class="font-mono text-xs bg-white border px-1.5 py-0.5 rounded">اسم المدرسة</span>
-                <span class="font-mono text-xs bg-white border px-1.5 py-0.5 rounded">المديرية</span>
-                <span class="font-mono text-xs bg-white border px-1.5 py-0.5 rounded">الرؤية</span>
-                <span class="font-mono text-xs bg-white border px-1.5 py-0.5 rounded">التصنيف</span>
-                <span class="font-mono text-xs bg-white border px-1.5 py-0.5 rounded">عدد الطلاب</span>
-                <span class="font-mono text-xs bg-white border px-1.5 py-0.5 rounded">الكادر</span>
-                <span class="font-mono text-xs bg-white border px-1.5 py-0.5 rounded">المختبرات</span>
-                <span class="font-mono text-xs bg-white border px-1.5 py-0.5 rounded">مشاريع STEM</span>
-                <span class="font-mono text-xs bg-white border px-1.5 py-0.5 rounded">نادي الابتكار</span>
-                <span class="font-mono text-xs bg-white border px-1.5 py-0.5 rounded">مؤشر إتقان</span>
-                <span class="font-mono text-xs bg-white border px-1.5 py-0.5 rounded">الرقمنة الإدارية</span>
-                <span class="font-mono text-xs bg-white border px-1.5 py-0.5 rounded">مبادرة قلوب بيضاء</span>
-                <span class="font-mono text-xs bg-white border px-1.5 py-0.5 rounded">التوأمة</span>
-                <span class="font-mono text-xs bg-white border px-1.5 py-0.5 rounded">الأثر المجتمعي</span>
-                <span class="font-mono text-xs bg-white border px-1.5 py-0.5 rounded">الجوائز</span>
-                <span class="font-mono text-xs bg-white border px-1.5 py-0.5 rounded">التعلم المرن</span>
-            </div>
-        </div>
-
-        <!-- The Printable Card -->
-        <div id="card-wrapper" class="flex justify-center transition-all duration-500">
-            
-            <div id="printable-card" class="bg-white max-w-[210mm] w-full border border-gray-300 shadow-2xl rounded-xl overflow-hidden print-exact relative">
+        <!-- Printable Card Wrapper -->
+        <div class="card-container flex justify-center">
+            <div id="printable-card" class="bg-white shadow-2xl border border-slate-200 relative">
                 
-                <!-- Demo Badge Overlay -->
-                <div id="demo-badge" class="demo-badge absolute top-4 left-4 bg-red-600 text-white px-3 py-1 rounded-full text-xs font-bold z-50 shadow-lg animate-pulse transform -rotate-12">
-                    نسخة توضيحية للمعاينة
+                <!-- Badge for screen preview -->
+                <div id="demo-badge" class="absolute top-2 left-2 bg-red-500 text-white text-[10px] px-2 py-0.5 rounded font-bold z-50 no-print">نموذج تجريبي</div>
+
+                <!-- Official Header -->
+                <div class="flex justify-between items-center border-b-2 border-primary pb-6 mb-8">
+                    <div class="text-right">
+                        <p class="font-bold text-sm">دولة فلسطين</p>
+                        <p class="font-bold text-sm">وزارة التربية والتعليم العالي</p>
+                        <p class="text-primary font-extrabold mt-1">مديرية: <span id="card-directorate">---</span></p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <!-- Ministry Logo Placeholder -->
+                        <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center border-2 border-slate-200">
+                             <i class="fas fa-landmark text-primary text-3xl"></i>
+                        </div>
+                    </div>
+                    <div class="text-left">
+                        <div class="bg-primary text-white px-4 py-2 rounded font-bold text-xl">فئة <span id="card-classification">A</span></div>
+                    </div>
                 </div>
 
-                <!-- Card Header (Official Look) -->
-                <div class="bg-slate-50 border-b-4 border-primary p-6 print-exact relative overflow-hidden">
-                    <!-- Decor background element -->
-                    <div class="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none" style="background-image: url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23046c4e\' fill-opacity=\'1\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
+                <!-- School Identity -->
+                <div class="text-center mb-10">
+                    <h1 id="card-school-name" class="text-4xl font-black text-slate-900 mb-4 tracking-tight">اسم المدرسة يظهر هنا</h1>
+                    <div class="bg-slate-50 border-y border-slate-200 py-3 px-6 inline-block rounded-lg">
+                        <p id="card-vision" class="text-slate-600 italic font-medium leading-relaxed max-w-xl">"الرؤية الخاصة بالمدرسة تظهر هنا بشكل مقتبس واحترافي"</p>
+                    </div>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-3 gap-4 mb-8">
+                    <div class="data-box text-center">
+                        <span class="text-xs font-bold text-slate-500 uppercase block mb-1">الطلبة</span>
+                        <span id="card-students" class="text-xl font-extrabold text-primary">--</span>
+                    </div>
+                    <div class="data-box text-center">
+                        <span class="text-xs font-bold text-slate-500 uppercase block mb-1">الكادر</span>
+                        <span id="card-staff" class="text-xl font-extrabold text-primary">--</span>
+                    </div>
+                    <div class="data-box text-center">
+                        <span class="text-xs font-bold text-slate-500 uppercase block mb-1">المرافق</span>
+                        <span id="card-labs" class="text-xl font-extrabold text-primary">--</span>
+                    </div>
+                </div>
+
+                <!-- Sections Matrix -->
+                <div class="grid grid-cols-2 gap-x-8 gap-y-10 flex-grow">
                     
-                    <div class="flex justify-between items-start relative z-10">
-                        <!-- Right: Ministry & Directorate -->
-                        <div class="flex items-center gap-4">
-                            <!-- Official Crest Placeholder (SVG) -->
-                            <svg class="w-20 h-20 text-primary" viewBox="0 0 100 100" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M50 5 L90 25 L90 60 C90 80 50 95 50 95 C50 95 10 80 10 60 L10 25 L50 5 Z" fill="none" stroke="currentColor" stroke-width="4"/>
-                                <path d="M50 15 L80 30 L80 58 C80 74 50 86 50 86 C50 86 20 74 20 58 L20 30 L50 15 Z" opacity="0.2"/>
-                                <path d="M45 40 L50 30 L55 40 L65 42 L58 50 L60 60 L50 55 L40 60 L42 50 L35 42 L45 40 Z"/>
-                            </svg>
+                    <div>
+                        <h3 class="section-header"><i class="fas fa-lightbulb ml-2 text-sm"></i> الابتكار والـ STEM</h3>
+                        <div class="space-y-4 pr-4">
                             <div>
-                                <h3 class="text-lg font-bold text-gray-800">وزارة التربية والتعليم العالي</h3>
-                                <h4 class="text-md font-semibold text-primary mt-1">مديرية التربية والتعليم - <span id="card-directorate">---</span></h4>
+                                <p class="text-[11px] font-bold text-slate-400">مشاريع تقنية:</p>
+                                <p id="card-stem" class="text-sm font-semibold text-slate-700 leading-snug">--</p>
                             </div>
-                        </div>
-
-                        <!-- Left: Classification Badge -->
-                        <div class="flex flex-col items-center">
-                            <div class="bg-accent text-white px-4 py-2 rounded-lg shadow font-bold text-xl print-exact border-2 border-white">
-                                فئة <span id="card-classification" class="mx-1">A</span>
+                            <div>
+                                <p class="text-[11px] font-bold text-slate-400">نادي الابتكار:</p>
+                                <p id="card-robot" class="text-sm font-semibold text-slate-700">--</p>
                             </div>
                         </div>
                     </div>
 
-                    <!-- School Name & Vision -->
-                    <div class="mt-6 text-center relative z-10">
-                        <h1 id="card-school-name" class="text-3xl font-extrabold text-secondary mb-3">اسم المدرسة</h1>
-                        <p id="card-vision" class="text-lg text-gray-600 italic font-medium max-w-2xl mx-auto">"رؤية المدرسة"</p>
+                    <div>
+                        <h3 class="section-header"><i class="fas fa-chart-bar ml-2 text-sm"></i> الأداء والرقمنة</h3>
+                        <div class="space-y-4 pr-4">
+                            <div>
+                                <p class="text-[11px] font-bold text-slate-400">مؤشر إتقان:</p>
+                                <p id="card-itqan" class="text-sm font-semibold text-slate-700 leading-snug">--</p>
+                            </div>
+                            <div>
+                                <p class="text-[11px] font-bold text-slate-400">الأتمتة والانضباط:</p>
+                                <p id="card-digital" class="text-sm font-semibold text-slate-700">--</p>
+                            </div>
+                        </div>
                     </div>
+
+                    <div>
+                        <h3 class="section-header"><i class="fas fa-users-cog ml-2 text-sm"></i> المسؤولية والمبادرات</h3>
+                        <div class="space-y-4 pr-4">
+                            <div>
+                                <p class="text-[11px] font-bold text-slate-400">القيم والتسامح:</p>
+                                <p id="card-hearts" class="text-sm font-semibold text-slate-700 leading-snug">--</p>
+                            </div>
+                            <div>
+                                <p class="text-[11px] font-bold text-slate-400">الأثر المجتمعي:</p>
+                                <p id="card-community" class="text-sm font-semibold text-slate-700 leading-snug">--</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="section-header"><i class="fas fa-star ml-2 text-sm"></i> التميز المستدام</h3>
+                        <div class="space-y-4 pr-4">
+                            <div>
+                                <p class="text-[11px] font-bold text-slate-400">إنجازات وجوائز:</p>
+                                <p id="card-awards" class="text-sm font-semibold text-slate-700 leading-snug">--</p>
+                            </div>
+                            <div>
+                                <p class="text-[11px] font-bold text-slate-400">بيئة التعلم المرن:</p>
+                                <p id="card-resilience" class="text-sm font-semibold text-slate-700 leading-snug">--</p>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
 
-                <!-- Card Body (Grid Layout) -->
-                <div class="p-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        
-                        <!-- Section 1: Vital Stats -->
-                        <div class="col-span-1 md:col-span-2 flex justify-between bg-white p-4 rounded-lg border border-gray-100 shadow-sm gap-4 print-exact">
-                            <div class="flex-1 text-center border-l border-gray-200 last:border-0">
-                                <i class="fas fa-users text-2xl text-blue-500 mb-2"></i>
-                                <div class="text-sm text-gray-500 font-semibold">عدد الطلاب</div>
-                                <div id="card-students" class="text-xl font-bold text-secondary">--</div>
+                <!-- Contact & Footer -->
+                <div class="mt-auto pt-10">
+                    <div class="bg-slate-900 text-white rounded-xl p-6 flex justify-between items-center">
+                        <div class="grid grid-cols-2 gap-x-8 gap-y-2">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-phone-alt text-cyan-400 text-xs"></i>
+                                <span id="card-phone" class="text-sm font-mono tracking-widest">--</span>
                             </div>
-                            <div class="flex-1 text-center border-l border-gray-200 last:border-0">
-                                <i class="fas fa-chalkboard-teacher text-2xl text-purple-500 mb-2"></i>
-                                <div class="text-sm text-gray-500 font-semibold">الكادر التعليمي</div>
-                                <div id="card-staff" class="text-xl font-bold text-secondary">--</div>
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-envelope text-cyan-400 text-xs"></i>
+                                <span id="card-email" class="text-xs">--</span>
                             </div>
-                            <div class="flex-1 text-center border-l border-gray-200 last:border-0">
-                                <i class="fas fa-flask text-2xl text-green-500 mb-2"></i>
-                                <div class="text-sm text-gray-500 font-semibold">المختبرات والمرافق</div>
-                                <div id="card-labs" class="text-xl font-bold text-secondary">--</div>
+                            <div class="flex items-center gap-3 col-span-2">
+                                <i class="fab fa-facebook-f text-cyan-400 text-xs"></i>
+                                <span id="card-fb" class="text-xs opacity-80 italic">--</span>
                             </div>
                         </div>
-
-                        <!-- Section 2: Innovation & STEM -->
-                        <div class="bg-blue-50 p-5 rounded-lg border border-blue-100 print-exact">
-                            <h3 class="text-lg font-bold text-blue-800 mb-4 border-b border-blue-200 pb-2 flex items-center gap-2">
-                                <i class="fas fa-rocket"></i> ركن الابتكار والـ STEM
-                            </h3>
-                            <ul class="space-y-3">
-                                <li class="flex items-start gap-2">
-                                    <i class="fas fa-microchip text-blue-500 mt-1"></i>
-                                    <div>
-                                        <span class="font-bold text-sm block">مشاريع STEM:</span>
-                                        <span id="card-stem" class="text-sm text-gray-700 leading-snug">--</span>
-                                    </div>
-                                </li>
-                                <li class="flex items-start gap-2">
-                                    <i class="fas fa-robot text-blue-500 mt-1"></i>
-                                    <div>
-                                        <span class="font-bold text-sm block">نادي الابتكار/الروبوت:</span>
-                                        <span id="card-robot" class="text-sm text-gray-700 leading-snug">--</span>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-
-                        <!-- Section 3: Competitive KPIs -->
-                        <div class="bg-emerald-50 p-5 rounded-lg border border-emerald-100 print-exact">
-                            <h3 class="text-lg font-bold text-primary mb-4 border-b border-emerald-200 pb-2 flex items-center gap-2">
-                                <i class="fas fa-chart-line"></i> مؤشرات الأداء التنافسي
-                            </h3>
-                            <ul class="space-y-3">
-                                <li class="flex items-start gap-2">
-                                    <i class="fas fa-check-circle text-emerald-500 mt-1"></i>
-                                    <div>
-                                        <span class="font-bold text-sm block">مؤشر "إتقان":</span>
-                                        <span id="card-itqan" class="text-sm text-gray-700 leading-snug">--</span>
-                                    </div>
-                                </li>
-                                <li class="flex items-start gap-2">
-                                    <i class="fas fa-laptop-code text-emerald-500 mt-1"></i>
-                                    <div>
-                                        <span class="font-bold text-sm block">الرقمنة الإدارية والانضباط:</span>
-                                        <span id="card-digital" class="text-sm text-gray-700 leading-snug">--</span>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-
-                        <!-- Section 4: Community & Impact -->
-                        <div class="bg-amber-50 p-5 rounded-lg border border-amber-100 print-exact">
-                            <h3 class="text-lg font-bold text-amber-800 mb-4 border-b border-amber-200 pb-2 flex items-center gap-2">
-                                <i class="fas fa-hands-helping"></i> المبادرات المجتمعية
-                            </h3>
-                            <ul class="space-y-3">
-                                <li class="flex items-start gap-2">
-                                    <i class="fas fa-heart text-amber-500 mt-1"></i>
-                                    <div>
-                                        <span class="font-bold text-sm block">مبادرة "قلوب بيضاء":</span>
-                                        <span id="card-hearts" class="text-sm text-gray-700 leading-snug">--</span>
-                                    </div>
-                                </li>
-                                <li class="flex items-start gap-2">
-                                    <i class="fas fa-handshake text-amber-500 mt-1"></i>
-                                    <div>
-                                        <span class="font-bold text-sm block">التوأمة والأثر المجتمعي:</span>
-                                        <span id="card-community" class="text-sm text-gray-700 leading-snug">--</span>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-
-                        <!-- Section 5: Excellence & Resilience -->
-                        <div class="bg-purple-50 p-5 rounded-lg border border-purple-100 print-exact">
-                            <h3 class="text-lg font-bold text-purple-800 mb-4 border-b border-purple-200 pb-2 flex items-center gap-2">
-                                <i class="fas fa-award"></i> التميز والاستدامة
-                            </h3>
-                            <ul class="space-y-3">
-                                <li class="flex items-start gap-2">
-                                    <i class="fas fa-trophy text-purple-500 mt-1"></i>
-                                    <div>
-                                        <span class="font-bold text-sm block">الجوائز والتكريمات:</span>
-                                        <span id="card-awards" class="text-sm text-gray-700 leading-snug">--</span>
-                                    </div>
-                                </li>
-                                <li class="flex items-start gap-2">
-                                    <i class="fas fa-sync-alt text-purple-500 mt-1"></i>
-                                    <div>
-                                        <span class="font-bold text-sm block">التعلم المرن والبيئة:</span>
-                                        <span id="card-resilience" class="text-sm text-gray-700 leading-snug">--</span>
-                                    </div>
-                                </li>
-                            </ul>
+                        <div class="bg-white p-1.5 rounded flex flex-col items-center">
+                            <div id="qrcode"></div>
+                            <p class="text-[8px] text-slate-900 font-bold mt-1 uppercase">Portal Access</p>
                         </div>
                     </div>
-                </div>
-
-                <!-- Card Footer (Contact & QR) -->
-                <div class="bg-gray-800 text-white p-6 mt-4 print-exact">
-                    <div class="flex justify-between items-center">
-                        <div class="flex-1">
-                            <h3 class="text-lg font-bold mb-3 border-b border-gray-600 pb-2 inline-block">معلومات التواصل</h3>
-                            <div class="grid grid-cols-2 gap-4 text-sm">
-                                <div class="flex items-center gap-2"><i class="fas fa-phone text-accent"></i> <span id="card-phone" dir="ltr">--</span></div>
-                                <div class="flex items-center gap-2"><i class="fas fa-envelope text-accent"></i> <span id="card-email">--</span></div>
-                                <div class="flex items-center gap-2 col-span-2"><i class="fab fa-facebook text-accent"></i> <span id="card-fb" class="truncate">--</span></div>
-                            </div>
-                        </div>
-                        
-                        <!-- QR Code Container -->
-                        <div class="ml-4 flex flex-col items-center bg-white p-2 rounded print-exact">
-                            <div id="qrcode" class="w-20 h-20"></div>
-                            <span class="text-[10px] text-gray-800 mt-1 font-bold">مسح للزيارة</span>
-                        </div>
+                    <div class="mt-4 text-center">
+                        <p class="text-[10px] text-slate-400 font-medium italic">تم إنشاء هذه البطاقة آلياً - نظام التوثيق التربوي الموحد</p>
                     </div>
                 </div>
 
             </div>
         </div>
-
     </main>
 
     <script>
-        // --- Demo Data Object ---
-        // This is exactly what managers should aim to provide in their Excel files.
         const demoData = {
-            "اسم المدرسة": "مدرسة المستقبل المشرق التكنولوجية",
-            "المديرية": "رام الله والبيرة",
-            "الرؤية": "بيئة تعليمية جاذبة تتبنى الابتكار التقني وتبني شخصية طالب منتمٍ ومبادر عالمياً.",
+            "اسم المدرسة": "مدرسة ذكور المستقبل الثانوية المهنية",
+            "المديرية": "وسط غزة",
+            "الرؤية": "تمكين الطلبة مهارياً وتقنياً ببيئة تعليمية محفزة للابتكار والإنتاج القيمي.",
             "التصنيف": "A",
-            "عدد الطلاب": "850 طالب",
-            "الكادر": "65 (معلم وإداري)",
-            "المختبرات": "2 علوم، 1 حاسوب، 1 مختبر ابتكار (FabLab)",
-            "مشاريع STEM": "مشروع 'الزراعة المائية الذكية' (فائز على مستوى المديرية)، ونظام تنقية الهواء المدرسي.",
-            "نادي الابتكار": "نادي 'روبوت المستقبل'، الفوز بالمركز الأول بمسابقة البرمجة لليافعين 2023.",
-            "مؤشر إتقان": "نسبة إتقان 88% للمهارات الأساسية، مع معالجة 90% من الفاقد التعليمي في الرياضيات.",
-            "الرقمنة الإدارية": "أتمتة كاملة للغياب باستخدام نظام بصمة الوجه (AI)، ولوحات بيانات (Dashboards) لمتابعة النتائج. لا يوجد حالات تنمر إلكتروني مسجلة.",
-            "مبادرة قلوب بيضاء": "تنفيذ 4 فعاليات لتعزيز التسامح، منها 'يوم الثقافات' ونشاط قيم التسامح الأسبوعي.",
-            "التوأمة": "توأمة مع مدرسة في السويد لتبادل الخبرات عبر منصة eTwinning.",
-            "الأثر المجتمعي": "تنظيم 3 ورش توعوية لأولياء الأمور حول 'الأمن السيبراني لحماية الأبناء'.",
-            "الجوائز": "جائزة المدرسة الدولية (ISA)، والمدرسة المتميزة في الإدارة الخضراء 2022.",
-            "التعلم المرن": "تطبيق نظام التعليم المدمج بنجاح، وتحويل الممرات لزوايا قراءة تفاعلية.",
-            "الهاتف": "02-298XXXX",
-            "البريد": "info@future-school.edu.ps",
-            "فيسبوك": "facebook.com/FutureSchool.Pal"
+            "عدد الطلاب": "740 طالب",
+            "الكادر": "52 تربوي",
+            "المختبرات": "3 مختبرات علمية ومركز ابتكار",
+            "مشاريع STEM": "مشروع تحلية المياه الذكي، نظام الري الرقمي المستدام.",
+            "نادي الابتكار": "فريق الروبوت المدرسي الحائز على جائزة الإبداع الوطنية.",
+            "مؤشر إتقان": "92% نسبة التحصيل في المهارات الأساسية للصفوف الأساسية.",
+            "الرقمنة الإدارية": "نظام ذكي لمتابعة الحضور، تحليل تلقائي لنتائج الاختبارات الفصلية.",
+            "مبادرة قلوب بيضاء": "سلسلة ورش 'التسامح لغة التعايش'، ولقاءات دورية للقيم.",
+            "التوأمة": "شراكة مع جامعات محلية لتدريب الطلبة على ريادة الأعمال.",
+            "الأثر المجتمعي": "توفير دورات صيانة أجهزة إلكترونية لأفراد المجتمع المحلي مجاناً.",
+            "الجوائز": "المركز الأول في مسابقة الذكاء الاصطناعي على مستوى الوطن.",
+            "التعلم المرن": "خطة استباقية للتعلم عن بُعد مع توظيف ممرات المدرسة كمعارض فنية.",
+            "الهاتف": "+970-59XXXXXXXX",
+            "البريد": "future.school@mohe.ps",
+            "فيسبوك": "fb.com/FutureSchoolOfficial"
         };
 
-        // Global variables
         let schoolsData = [];
         let qrCodeInstance = null;
 
-        // Elements
-        const fileInput = document.getElementById('excel-file');
-        const fileNameDisplay = document.getElementById('file-name');
-        const uploadLabel = document.getElementById('upload-label');
-        const schoolSelect = document.getElementById('school-select');
-        const demoBadge = document.getElementById('demo-badge');
+        window.onload = () => loadDemoData();
 
-        // Load Demo Data on Startup
-        window.onload = function() {
-            loadDemoData();
-        };
-
-        // Function to load the demo template
         function loadDemoData() {
-            // Reset dropdown if it was populated from Excel
-            schoolSelect.innerHTML = '<option value="demo" selected>النموذج التوضيحي (للمعاينة)</option>';
-            // Show demo badge
-            demoBadge.classList.remove('hidden');
-            // Render the demo object
+            document.getElementById('demo-badge').style.display = 'block';
             renderCard(demoData);
         }
 
-        // Event Listener for File Upload
-        fileInput.addEventListener('change', function(e) {
+        const fileInput = document.getElementById('excel-file');
+        const schoolSelect = document.getElementById('school-select');
+
+        fileInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (!file) return;
-
-            fileNameDisplay.textContent = file.name;
-            fileNameDisplay.classList.replace('text-gray-600', 'text-primary');
-            uploadLabel.classList.remove('pulse-border'); // Stop pulsing once file is selected
-
             const reader = new FileReader();
-            
-            reader.onload = function(e) {
-                try {
-                    const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, {type: 'array'});
-                    
-                    const firstSheetName = workbook.SheetNames[0];
-                    const worksheet = workbook.Sheets[firstSheetName];
-                    
-                    schoolsData = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
-                    
-                    if(schoolsData.length > 0) {
-                        populateDropdown();
-                        // Automatically render the first school in the uploaded list
-                        schoolSelect.value = "0";
-                        renderCard(schoolsData[0]);
-                        // Hide demo badge since we are now viewing real data
-                        demoBadge.classList.add('hidden');
-                    } else {
-                        alert("الملف فارغ أو لا يمكن قراءته.");
-                    }
-                } catch (error) {
-                    console.error(error);
-                    alert("حدث خطأ أثناء قراءة الملف. تأكد من أنه بصيغة Excel صحيحة.");
-                }
+            reader.onload = (e) => {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, {type: 'array'});
+                const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                schoolsData = XLSX.utils.sheet_to_json(sheet, { defval: "" });
+                populateDropdown();
             };
-            
             reader.readAsArrayBuffer(file);
         });
 
-        // Populate Dropdown from Excel
         function populateDropdown() {
-            schoolSelect.innerHTML = '<option value="" disabled>-- اختر مدرسة من القائمة المرفوعة --</option>';
-            
-            schoolsData.forEach((school, index) => {
-                const nameKey = Object.keys(school).find(key => key.includes('اسم المدرسة') || key.includes('المدرسة'));
-                const schoolName = school[nameKey] || `مدرسة غير مسماة (${index + 1})`;
-                
-                const option = document.createElement('option');
-                option.value = index;
-                option.textContent = schoolName;
-                schoolSelect.appendChild(option);
+            schoolSelect.innerHTML = '<option value="" disabled selected>-- اختر المدرسة --</option>';
+            schoolsData.forEach((s, i) => {
+                const name = s["اسم المدرسة"] || s["المدرسة"] || `مدرسة ${i+1}`;
+                const opt = document.createElement('option');
+                opt.value = i;
+                opt.textContent = name;
+                schoolSelect.appendChild(opt);
             });
         }
 
-        // Event Listener for Dropdown Selection
-        schoolSelect.addEventListener('change', function(e) {
-            const selectedValue = e.target.value;
-            if (selectedValue === "demo") {
-                loadDemoData();
-            } else if (selectedValue !== "") {
-                demoBadge.classList.add('hidden');
-                renderCard(schoolsData[selectedValue]);
+        schoolSelect.addEventListener('change', (e) => {
+            if (e.target.value === "demo") loadDemoData();
+            else {
+                document.getElementById('demo-badge').style.display = 'none';
+                renderCard(schoolsData[e.target.value]);
             }
         });
 
-        // Helper function to safely get data from row using partial key match
-        function getValue(row, keywords) {
-            // Handle specific Demo Data object first
-            if (row === demoData) {
-                for (const keyword of keywords) {
-                    const exactMatch = Object.keys(row).find(k => k.includes(keyword));
-                    if (exactMatch && row[exactMatch]) return row[exactMatch];
-                }
-            }
-            
-            // Handle parsed Excel data
-            for (const key of Object.keys(row)) {
-                for (const keyword of keywords) {
-                    if (key.includes(keyword)) {
-                        return row[key] ? row[key].toString().trim() : "غير متوفر";
-                    }
-                }
-            }
-            return "غير متوفر";
-        }
-
-        // Render Data into the Card
         function renderCard(data) {
-            document.getElementById('card-school-name').textContent = getValue(data, ['اسم المدرسة', 'المدرسة']);
-            document.getElementById('card-directorate').textContent = getValue(data, ['المديرية', 'مديرية']);
-            document.getElementById('card-vision').textContent = `"${getValue(data, ['الرؤية', 'رؤية'])}"`;
-            
-            let classVal = getValue(data, ['التصنيف', 'فئة', 'تصنيف']);
-            document.getElementById('card-classification').textContent = classVal !== "غير متوفر" ? classVal : "A";
+            const get = (keys) => {
+                for (let k of keys) {
+                    const found = Object.keys(data).find(key => key.includes(k));
+                    if (found) return data[found];
+                }
+                return "--";
+            };
 
-            document.getElementById('card-students').textContent = getValue(data, ['عدد الطلاب', 'الطلاب']);
-            document.getElementById('card-staff').textContent = getValue(data, ['الكادر', 'المعلمين', 'المعلمات']);
-            document.getElementById('card-labs').textContent = getValue(data, ['المختبرات', 'مختبر']);
+            document.getElementById('card-school-name').textContent = get(['اسم المدرسة', 'المدرسة']);
+            document.getElementById('card-directorate').textContent = get(['المديرية', 'مديرية']);
+            document.getElementById('card-vision').textContent = `"${get(['الرؤية', 'رؤية'])}"`;
+            document.getElementById('card-classification').textContent = get(['التصنيف', 'فئة']);
+            document.getElementById('card-students').textContent = get(['الطلاب', 'عدد الطلاب']);
+            document.getElementById('card-staff').textContent = get(['الكادر', 'المعلمين']);
+            document.getElementById('card-labs').textContent = get(['المختبرات', 'مختبر']);
+            document.getElementById('card-stem').textContent = get(['STEM', 'مشاريع']);
+            document.getElementById('card-robot').textContent = get(['نادي', 'روبوت']);
+            document.getElementById('card-itqan').textContent = get(['إتقان', 'مهارات']);
+            document.getElementById('card-digital').textContent = get(['الرقمنة', 'رقمي', 'أتمتة']);
+            document.getElementById('card-hearts').textContent = get(['قلوب بيضاء', 'تسامح']);
+            document.getElementById('card-community').textContent = get(['المجتمعي', 'الأثر']);
+            document.getElementById('card-awards').textContent = get(['الجوائز', 'تكريم']);
+            document.getElementById('card-resilience').textContent = get(['المرن', 'الأزمات']);
+            document.getElementById('card-phone').textContent = get(['هاتف', 'جوال']);
+            document.getElementById('card-email').textContent = get(['إيميل', 'بريد']);
+            document.getElementById('card-fb').textContent = get(['فيسبوك', 'Facebook']);
 
-            document.getElementById('card-stem').textContent = getValue(data, ['STEM', 'مشاريع']);
-            document.getElementById('card-robot').textContent = getValue(data, ['نادي', 'الابتكار', 'روبوت']);
-
-            document.getElementById('card-itqan').textContent = getValue(data, ['إتقان', 'مؤشر إتقان']);
-            
-            const adminDigital = getValue(data, ['الرقمنة', 'الإدارية']);
-            const discipline = getValue(data, ['الانضباط', 'الرقمي']);
-            document.getElementById('card-digital').textContent = discipline !== "غير متوفر" ? `${adminDigital} | ${discipline}` : adminDigital;
-
-            document.getElementById('card-hearts').textContent = getValue(data, ['قلوب بيضاء', 'مبادرة']);
-            
-            const twinning = getValue(data, ['التوأمة', 'توأمة']);
-            const impact = getValue(data, ['الأثر', 'المجتمعي']);
-            document.getElementById('card-community').textContent = `${twinning} | ${impact}`.replace(/غير متوفر/g, '').trim() || "غير متوفر";
-
-            document.getElementById('card-awards').textContent = getValue(data, ['الجوائز', 'تكريم']);
-            document.getElementById('card-resilience').textContent = getValue(data, ['التعلم المرن', 'مرن']);
-
-            document.getElementById('card-phone').textContent = getValue(data, ['هاتف', 'جوال', 'رقم']);
-            document.getElementById('card-email').textContent = getValue(data, ['إيميل', 'بريد', 'Email']);
-            
-            const fbLink = getValue(data, ['فيسبوك', 'Facebook', 'موقع']);
-            document.getElementById('card-fb').textContent = fbLink;
-
-            // Generate QR Code
-            generateQR(fbLink !== "غير متوفر" ? fbLink : window.location.href);
-        }
-
-        // Generate QR Code using qrcode.js
-        function generateQR(text) {
             const qrContainer = document.getElementById("qrcode");
-            qrContainer.innerHTML = ""; // Clear previous
-            
-            let qrText = text;
-            if(!qrText.startsWith('http') && !qrText.includes('غير متوفر')) {
-                qrText = 'https://' + qrText;
-            } else if (qrText === 'غير متوفر') {
-                qrText = 'https://moe.edu.ps'; 
-            }
-
-            qrCodeInstance = new QRCode(qrContainer, {
-                text: qrText,
-                width: 70, // Slightly smaller for better fit
-                height: 70,
-                colorDark : "#000000",
-                colorLight : "#ffffff",
-                correctLevel : QRCode.CorrectLevel.L
-            });
+            qrContainer.innerHTML = "";
+            new QRCode(qrContainer, { text: get(['فيسبوك', 'رابط']) || "https://mohe.ps", width: 64, height: 64 });
         }
     </script>
 </body>

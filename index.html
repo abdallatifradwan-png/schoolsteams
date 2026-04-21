@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>البطاقات التعريفية للمدارس - أفقي</title>
+    <title>البطاقات التعريفية للمدارس - وزارة التربية والتعليم العالي</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -36,11 +36,11 @@
     <style>
         body { background-color: #e2e8f0; }
 
-        /* Print Settings for A4 Landscape */
+        /* Strict Print Settings for ONE A4 Landscape Page */
         @media print {
             @page {
-                size: A4 landscape;
-                margin: 0 !important; /* Zero margin to strictly control via CSS */
+                size: A4 landscape !important;
+                margin: 0 !important;
             }
             body {
                 background: white !important;
@@ -51,15 +51,18 @@
             }
             .no-print { display: none !important; }
             
+            /* Force exact dimensions to prevent overflow/second page */
             #printable-card {
                 width: 297mm !important;
-                height: 209mm !important; /* Slightly less than 210 to prevent blank 2nd page */
+                height: 209mm !important; /* Marginally less than 210 to ensure 1 page */
                 margin: 0 !important;
                 border: none !important;
                 box-shadow: none !important;
                 border-radius: 0 !important;
-                page-break-inside: avoid;
-                page-break-after: avoid;
+                overflow: hidden !important;
+                page-break-inside: avoid !important;
+                page-break-after: avoid !important;
+                page-break-before: avoid !important;
             }
         }
 
@@ -113,7 +116,7 @@
                 </div>
                 <div class="w-full md:w-1/3">
                     <button onclick="window.print()" class="w-full bg-gold hover:bg-yellow-600 text-white font-bold py-2 rounded shadow transition-colors flex justify-center items-center gap-2 text-sm">
-                        <i class="fas fa-print"></i> طباعة البطاقة (PDF أفقي)
+                        <i class="fas fa-print"></i> طباعة البطاقة (PDF أفقي 1 صفحة)
                     </button>
                 </div>
             </div>
@@ -145,7 +148,10 @@
                             <p class="text-xs font-bold text-navy">وزارة التربية والتعليم العالي</p>
                             <p class="text-[11px] font-bold text-gold mt-1">مديرية <span id="card-directorate">---</span></p>
                         </div>
-                        <i class="fas fa-landmark text-3xl text-navy opacity-80"></i>
+                        <!-- Official Logo -->
+                        <div class="w-14 h-14 flex-shrink-0">
+                             <img src="https://media.licdn.com/dms/image/v2/C560BAQFgS9_eQ3N2_A/company-logo_200_200/company-logo_200_200/0/1630650993952/ministry_of_education___palestine_logo?e=2147483647&v=beta&t=749S_S1yJ83k1H2xH9_b8yP7xO531R4qW5E2I1_x2_c" alt="شعار الوزارة" class="w-full h-full object-contain filter drop-shadow-sm" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\' fill=\'%231e3a8a\'%3E%3Cpath d=\'M50 5L90 25L90 60C90 80 50 95 50 95C50 95 10 80 10 60L10 25L50 5Z\' fill=\'none\' stroke=\'%231e3a8a\' stroke-width=\'4\'/%3E%3C/svg%3E';">
+                        </div>
                     </div>
 
                     <!-- School Name & Classification -->

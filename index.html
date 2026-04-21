@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>البطاقات التعريفية للمدارس - وزارة التربية والتعليم العالي</title>
+    <title>البطاقات التعريفية للمدارس والمدراء</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -36,10 +36,10 @@
     <style>
         body { background-color: #e2e8f0; }
 
-        /* Strict Print Settings for ONE A4 Landscape Page */
+        /* Print Settings for A4 Landscape */
         @media print {
             @page {
-                size: A4 landscape !important;
+                size: A4 landscape;
                 margin: 0 !important;
             }
             body {
@@ -51,18 +51,15 @@
             }
             .no-print { display: none !important; }
             
-            /* Force exact dimensions to prevent overflow/second page */
             #printable-card {
                 width: 297mm !important;
-                height: 209mm !important; /* Marginally less than 210 to ensure 1 page */
+                height: 209mm !important; 
                 margin: 0 !important;
                 border: none !important;
                 box-shadow: none !important;
                 border-radius: 0 !important;
-                overflow: hidden !important;
-                page-break-inside: avoid !important;
-                page-break-after: avoid !important;
-                page-break-before: avoid !important;
+                page-break-inside: avoid;
+                page-break-after: avoid;
             }
         }
 
@@ -76,7 +73,6 @@
             }
         }
 
-        /* Essential for ensuring background colors print */
         .print-exact {
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
@@ -95,7 +91,7 @@
         <header class="bg-navy text-white py-3 px-6 flex justify-between items-center border-b-4 border-gold">
             <div class="flex items-center gap-3">
                 <i class="fas fa-id-card text-2xl text-gold"></i>
-                <h1 class="text-xl font-bold">نظام البطاقات التعريفية (تخطيط أفقي A4)</h1>
+                <h1 class="text-xl font-bold">نظام البطاقات التعريفية (تخطيط أفقي مقسم)</h1>
             </div>
             <button onclick="loadDemoData()" class="text-sm bg-white/10 hover:bg-white/20 border border-white/20 px-3 py-1.5 rounded transition-colors">
                 <i class="fas fa-eye mr-1"></i> نموذج توضيحي
@@ -116,7 +112,7 @@
                 </div>
                 <div class="w-full md:w-1/3">
                     <button onclick="window.print()" class="w-full bg-gold hover:bg-yellow-600 text-white font-bold py-2 rounded shadow transition-colors flex justify-center items-center gap-2 text-sm">
-                        <i class="fas fa-print"></i> طباعة البطاقة (PDF أفقي 1 صفحة)
+                        <i class="fas fa-print"></i> طباعة البطاقة (PDF أفقي)
                     </button>
                 </div>
             </div>
@@ -134,163 +130,220 @@
                 نسخة تجريبية
             </div>
 
-            <!-- RIGHT COLUMN: Identity & Stats (35% width) -->
-            <div class="w-[35%] bg-slate-50 border-l border-slate-200 flex flex-col print-exact relative">
-                <!-- Decorative Top Border -->
+            <!-- RIGHT COLUMN: School Identity (30% width) -->
+            <div class="w-[30%] bg-slate-50 flex flex-col print-exact relative">
                 <div class="h-2 w-full bg-navy absolute top-0 left-0 print-exact"></div>
 
-                <div class="p-6 flex flex-col h-full">
-                    
-                    <!-- Official Header -->
-                    <div class="flex items-start justify-between mb-4 mt-2">
-                        <div>
-                            <p class="text-[10px] font-bold text-slate-500">دولة فلسطين</p>
-                            <p class="text-xs font-bold text-navy">وزارة التربية والتعليم العالي</p>
-                            <p class="text-[11px] font-bold text-gold mt-1">مديرية <span id="card-directorate">---</span></p>
-                        </div>
-                        <!-- Official Logo -->
-                        <div class="w-14 h-14 flex-shrink-0">
-                             <img src="https://media.licdn.com/dms/image/v2/C560BAQFgS9_eQ3N2_A/company-logo_200_200/company-logo_200_200/0/1630650993952/ministry_of_education___palestine_logo?e=2147483647&v=beta&t=749S_S1yJ83k1H2xH9_b8yP7xO531R4qW5E2I1_x2_c" alt="شعار الوزارة" class="w-full h-full object-contain filter drop-shadow-sm" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\' fill=\'%231e3a8a\'%3E%3Cpath d=\'M50 5L90 25L90 60C90 80 50 95 50 95C50 95 10 80 10 60L10 25L50 5Z\' fill=\'none\' stroke=\'%231e3a8a\' stroke-width=\'4\'/%3E%3C/svg%3E';">
-                        </div>
+                <div class="p-5 flex flex-col h-full">
+                    <!-- Official Header & Prominent Logo -->
+                    <div class="flex flex-col items-center justify-center mb-4 mt-2 text-center">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/6/64/Emblem_of_Palestine.svg" 
+                             alt="شعار دولة فلسطين" 
+                             class="w-16 h-20 object-contain print-exact mb-2"
+                             onerror="this.onerror=null; this.src='https://via.placeholder.com/60x70?text=Logo';">
+                        <p class="text-[11px] font-bold text-slate-600">دولة فلسطين</p>
+                        <p class="text-sm font-black text-navy">وزارة التربية والتعليم العالي</p>
+                        <p class="text-[12px] font-bold text-gold mt-0.5">مديرية <span id="card-directorate">---</span></p>
                     </div>
 
-                    <!-- School Name & Classification -->
-                    <div class="mt-2 mb-4">
-                        <h1 id="card-school-name" class="text-2xl font-black text-slate-900 leading-tight mb-2">اسم المدرسة</h1>
-                        <div class="inline-flex items-center bg-navy text-white px-3 py-1 rounded text-sm font-bold print-exact shadow-sm">
-                            <i class="fas fa-star text-gold text-xs mr-1 ml-1"></i> فئة المدرسة: <span id="card-classification" class="mx-1 text-gold">A</span>
+                    <!-- School Name -->
+                    <div class="text-center mb-4 border-t border-b border-slate-200 py-3">
+                        <h1 id="card-school-name" class="text-xl font-black text-slate-900 leading-tight mb-2">اسم المدرسة</h1>
+                        <div class="inline-flex items-center bg-navy text-white px-3 py-0.5 rounded text-xs font-bold print-exact shadow-sm">
+                            <i class="fas fa-star text-gold text-[10px] mr-1 ml-1"></i> فئة المدرسة: <span id="card-classification" class="mx-1 text-gold">A</span>
                         </div>
                     </div>
 
                     <!-- Vision -->
-                    <div class="bg-white p-3 rounded border-r-4 border-gold shadow-sm mb-6 print-exact">
+                    <div class="bg-white p-3 rounded border-r-4 border-gold shadow-sm mb-4 print-exact">
                         <p class="text-[10px] font-bold text-slate-400 mb-1">رؤية المدرسة:</p>
-                        <p id="card-vision" class="text-xs text-slate-700 italic font-medium leading-relaxed">"---"</p>
+                        <p id="card-vision" class="text-[11px] text-slate-700 italic font-medium leading-relaxed">"---"</p>
                     </div>
 
-                    <!-- Vital Stats (Compact Grid) -->
+                    <!-- Vital Stats -->
                     <div class="grid grid-cols-3 gap-2 mb-auto">
-                        <div class="bg-white border border-slate-200 rounded p-2 text-center print-exact">
-                            <i class="fas fa-users text-navy mb-1 text-lg"></i>
-                            <p class="text-[9px] font-bold text-slate-500">الطلبة</p>
-                            <p id="card-students" class="text-sm font-black text-slate-800">--</p>
+                        <div class="bg-white border border-slate-200 rounded p-1.5 text-center print-exact">
+                            <i class="fas fa-users text-navy mb-1 text-sm"></i>
+                            <p class="text-[8px] font-bold text-slate-500">الطلبة</p>
+                            <p id="card-students" class="text-xs font-black text-slate-800">--</p>
                         </div>
-                        <div class="bg-white border border-slate-200 rounded p-2 text-center print-exact">
-                            <i class="fas fa-chalkboard-teacher text-navy mb-1 text-lg"></i>
-                            <p class="text-[9px] font-bold text-slate-500">الكادر</p>
-                            <p id="card-staff" class="text-sm font-black text-slate-800">--</p>
+                        <div class="bg-white border border-slate-200 rounded p-1.5 text-center print-exact">
+                            <i class="fas fa-chalkboard-teacher text-navy mb-1 text-sm"></i>
+                            <p class="text-[8px] font-bold text-slate-500">الكادر</p>
+                            <p id="card-staff" class="text-xs font-black text-slate-800">--</p>
                         </div>
-                        <div class="bg-white border border-slate-200 rounded p-2 text-center print-exact">
-                            <i class="fas fa-flask text-navy mb-1 text-lg"></i>
-                            <p class="text-[9px] font-bold text-slate-500">المرافق</p>
-                            <p id="card-labs" class="text-sm font-black text-slate-800">--</p>
+                        <div class="bg-white border border-slate-200 rounded p-1.5 text-center print-exact">
+                            <i class="fas fa-flask text-navy mb-1 text-sm"></i>
+                            <p class="text-[8px] font-bold text-slate-500">المرافق</p>
+                            <p id="card-labs" class="text-xs font-black text-slate-800">--</p>
                         </div>
                     </div>
 
-                    <!-- Footer / Contact Info inside Sidebar -->
-                    <div class="mt-6 pt-4 border-t border-slate-200 flex justify-between items-end">
-                        <div class="space-y-1.5 w-full pr-2 text-xs">
+                    <!-- Contact Info -->
+                    <div class="mt-4 pt-3 border-t border-slate-200 flex justify-between items-end">
+                        <div class="space-y-1.5 w-full pr-1 text-xs">
                             <div class="flex items-center gap-2 text-slate-600">
-                                <i class="fas fa-phone w-4 text-center text-navy"></i> <span id="card-phone" dir="ltr" class="font-mono text-[10px]">--</span>
+                                <i class="fas fa-phone w-3 text-center text-navy text-[10px]"></i> <span id="card-phone" dir="ltr" class="font-mono text-[9px]">--</span>
                             </div>
                             <div class="flex items-center gap-2 text-slate-600">
-                                <i class="fas fa-envelope w-4 text-center text-navy"></i> <span id="card-email" class="text-[10px] truncate max-w-[120px]">--</span>
+                                <i class="fas fa-envelope w-3 text-center text-navy text-[10px]"></i> <span id="card-email" class="text-[9px] truncate max-w-[100px]">--</span>
                             </div>
                             <div class="flex items-center gap-2 text-slate-600">
-                                <i class="fab fa-facebook w-4 text-center text-navy"></i> <span id="card-fb" class="text-[10px] truncate max-w-[120px]">--</span>
+                                <i class="fab fa-facebook w-3 text-center text-navy text-[10px]"></i> <span id="card-fb" class="text-[9px] truncate max-w-[100px]">--</span>
                             </div>
                         </div>
                         <div class="bg-white p-1 rounded shadow-sm border border-slate-200 print-exact flex-shrink-0">
-                            <div id="qrcode" class="w-16 h-16"></div>
+                            <div id="qrcode" class="w-12 h-12"></div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- LEFT COLUMN: Data Matrix (65% width) -->
-            <div class="w-[65%] p-6 flex flex-col print-exact bg-white relative">
-                <!-- Decorative Top Border -->
+            <!-- MIDDLE COLUMN: School Matrix (40% width) -->
+            <div class="w-[40%] p-4 flex flex-col print-exact bg-white relative border-r border-slate-200">
                 <div class="h-2 w-full bg-gold absolute top-0 left-0 print-exact"></div>
 
-                <!-- 2x2 Grid tightly packed to maximize space -->
-                <div class="grid grid-cols-2 grid-rows-2 gap-4 h-full mt-2">
+                <!-- 2x2 Grid tightly packed -->
+                <div class="grid grid-cols-2 grid-rows-2 gap-3 h-full mt-2">
                     
-                    <!-- Box 1: STEM & Innovation -->
-                    <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 flex flex-col print-exact relative overflow-hidden">
-                        <div class="absolute -left-4 -top-4 text-navy opacity-5 text-6xl"><i class="fas fa-rocket"></i></div>
-                        <h2 class="text-sm font-bold text-navy mb-3 border-b border-slate-200 pb-2 flex items-center gap-2 relative z-10">
-                            <span class="bg-navy text-white w-6 h-6 rounded-full flex items-center justify-center text-xs"><i class="fas fa-microchip"></i></span>
+                    <!-- Box 1: STEM -->
+                    <div class="bg-slate-50 border border-slate-200 rounded p-3 flex flex-col print-exact relative overflow-hidden">
+                        <div class="absolute -left-3 -top-3 text-navy opacity-5 text-5xl"><i class="fas fa-rocket"></i></div>
+                        <h2 class="text-xs font-bold text-navy mb-2 border-b border-slate-200 pb-1.5 flex items-center gap-1.5 relative z-10">
+                            <span class="bg-navy text-white w-5 h-5 rounded-full flex items-center justify-center text-[9px]"><i class="fas fa-microchip"></i></span>
                             الابتكار والـ STEM
                         </h2>
-                        <div class="space-y-3 relative z-10">
+                        <div class="space-y-2 relative z-10">
                             <div>
-                                <h3 class="text-[10px] font-black text-gold uppercase mb-0.5">مشاريع STEM المحققة</h3>
-                                <p id="card-stem" class="text-[11px] font-semibold text-slate-700 leading-snug">--</p>
+                                <h3 class="text-[9px] font-black text-gold uppercase mb-0.5">مشاريع STEM المحققة</h3>
+                                <p id="card-stem" class="text-[10px] font-semibold text-slate-700 leading-snug">--</p>
                             </div>
                             <div>
-                                <h3 class="text-[10px] font-black text-gold uppercase mb-0.5">نادي الابتكار والمبرمجين</h3>
-                                <p id="card-robot" class="text-[11px] font-semibold text-slate-700 leading-snug">--</p>
+                                <h3 class="text-[9px] font-black text-gold uppercase mb-0.5">نادي الابتكار والمبرمجين</h3>
+                                <p id="card-robot" class="text-[10px] font-semibold text-slate-700 leading-snug">--</p>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Box 2: KPIs & Performance -->
-                    <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 flex flex-col print-exact relative overflow-hidden">
-                        <div class="absolute -left-4 -top-4 text-navy opacity-5 text-6xl"><i class="fas fa-chart-line"></i></div>
-                        <h2 class="text-sm font-bold text-navy mb-3 border-b border-slate-200 pb-2 flex items-center gap-2 relative z-10">
-                            <span class="bg-navy text-white w-6 h-6 rounded-full flex items-center justify-center text-xs"><i class="fas fa-tachometer-alt"></i></span>
+                    <!-- Box 2: KPIs -->
+                    <div class="bg-slate-50 border border-slate-200 rounded p-3 flex flex-col print-exact relative overflow-hidden">
+                        <div class="absolute -left-3 -top-3 text-navy opacity-5 text-5xl"><i class="fas fa-chart-line"></i></div>
+                        <h2 class="text-xs font-bold text-navy mb-2 border-b border-slate-200 pb-1.5 flex items-center gap-1.5 relative z-10">
+                            <span class="bg-navy text-white w-5 h-5 rounded-full flex items-center justify-center text-[9px]"><i class="fas fa-tachometer-alt"></i></span>
                             مؤشرات الأداء التنافسي
                         </h2>
-                        <div class="space-y-3 relative z-10">
+                        <div class="space-y-2 relative z-10">
                             <div>
-                                <h3 class="text-[10px] font-black text-gold uppercase mb-0.5">مؤشر "إتقان" والفاقد التعليمي</h3>
-                                <p id="card-itqan" class="text-[11px] font-semibold text-slate-700 leading-snug">--</p>
+                                <h3 class="text-[9px] font-black text-gold uppercase mb-0.5">مؤشر "إتقان" والفاقد التعليمي</h3>
+                                <p id="card-itqan" class="text-[10px] font-semibold text-slate-700 leading-snug">--</p>
                             </div>
                             <div>
-                                <h3 class="text-[10px] font-black text-gold uppercase mb-0.5">الرقمنة الإدارية والانضباط</h3>
-                                <p id="card-digital" class="text-[11px] font-semibold text-slate-700 leading-snug">--</p>
+                                <h3 class="text-[9px] font-black text-gold uppercase mb-0.5">الرقمنة الإدارية والانضباط</h3>
+                                <p id="card-digital" class="text-[10px] font-semibold text-slate-700 leading-snug">--</p>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Box 3: Community & Responsibility -->
-                    <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 flex flex-col print-exact relative overflow-hidden">
-                        <div class="absolute -left-4 -bottom-4 text-navy opacity-5 text-6xl"><i class="fas fa-hands-helping"></i></div>
-                        <h2 class="text-sm font-bold text-navy mb-3 border-b border-slate-200 pb-2 flex items-center gap-2 relative z-10">
-                            <span class="bg-navy text-white w-6 h-6 rounded-full flex items-center justify-center text-xs"><i class="fas fa-heart"></i></span>
+                    <!-- Box 3: Community -->
+                    <div class="bg-slate-50 border border-slate-200 rounded p-3 flex flex-col print-exact relative overflow-hidden">
+                        <div class="absolute -left-3 -bottom-3 text-navy opacity-5 text-5xl"><i class="fas fa-hands-helping"></i></div>
+                        <h2 class="text-xs font-bold text-navy mb-2 border-b border-slate-200 pb-1.5 flex items-center gap-1.5 relative z-10">
+                            <span class="bg-navy text-white w-5 h-5 rounded-full flex items-center justify-center text-[9px]"><i class="fas fa-heart"></i></span>
                             المسؤولية والمبادرات
                         </h2>
-                        <div class="space-y-3 relative z-10">
+                        <div class="space-y-2 relative z-10">
                             <div>
-                                <h3 class="text-[10px] font-black text-gold uppercase mb-0.5">مبادرة "قلوب بيضاء" (القيم والتسامح)</h3>
-                                <p id="card-hearts" class="text-[11px] font-semibold text-slate-700 leading-snug">--</p>
+                                <h3 class="text-[9px] font-black text-gold uppercase mb-0.5">مبادرة "قلوب بيضاء"</h3>
+                                <p id="card-hearts" class="text-[10px] font-semibold text-slate-700 leading-snug">--</p>
                             </div>
                             <div>
-                                <h3 class="text-[10px] font-black text-gold uppercase mb-0.5">التوأمة والأثر المجتمعي</h3>
-                                <p id="card-community" class="text-[11px] font-semibold text-slate-700 leading-snug">--</p>
+                                <h3 class="text-[9px] font-black text-gold uppercase mb-0.5">التوأمة والأثر المجتمعي</h3>
+                                <p id="card-community" class="text-[10px] font-semibold text-slate-700 leading-snug">--</p>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Box 4: Excellence & Resilience -->
-                    <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 flex flex-col print-exact relative overflow-hidden">
-                        <div class="absolute -left-4 -bottom-4 text-navy opacity-5 text-6xl"><i class="fas fa-trophy"></i></div>
-                        <h2 class="text-sm font-bold text-navy mb-3 border-b border-slate-200 pb-2 flex items-center gap-2 relative z-10">
-                            <span class="bg-navy text-white w-6 h-6 rounded-full flex items-center justify-center text-xs"><i class="fas fa-award"></i></span>
+                    <!-- Box 4: Excellence -->
+                    <div class="bg-slate-50 border border-slate-200 rounded p-3 flex flex-col print-exact relative overflow-hidden">
+                        <div class="absolute -left-3 -bottom-3 text-navy opacity-5 text-5xl"><i class="fas fa-trophy"></i></div>
+                        <h2 class="text-xs font-bold text-navy mb-2 border-b border-slate-200 pb-1.5 flex items-center gap-1.5 relative z-10">
+                            <span class="bg-navy text-white w-5 h-5 rounded-full flex items-center justify-center text-[9px]"><i class="fas fa-award"></i></span>
                             التميز والاستدامة
                         </h2>
-                        <div class="space-y-3 relative z-10">
+                        <div class="space-y-2 relative z-10">
                             <div>
-                                <h3 class="text-[10px] font-black text-gold uppercase mb-0.5">الجوائز والتكريمات</h3>
-                                <p id="card-awards" class="text-[11px] font-semibold text-slate-700 leading-snug">--</p>
+                                <h3 class="text-[9px] font-black text-gold uppercase mb-0.5">الجوائز والتكريمات</h3>
+                                <p id="card-awards" class="text-[10px] font-semibold text-slate-700 leading-snug">--</p>
                             </div>
                             <div>
-                                <h3 class="text-[10px] font-black text-gold uppercase mb-0.5">التعلم المرن والبيئة الجاذبة</h3>
-                                <p id="card-resilience" class="text-[11px] font-semibold text-slate-700 leading-snug">--</p>
+                                <h3 class="text-[9px] font-black text-gold uppercase mb-0.5">التعلم المرن والبيئة الجاذبة</h3>
+                                <p id="card-resilience" class="text-[10px] font-semibold text-slate-700 leading-snug">--</p>
                             </div>
                         </div>
                     </div>
 
+                </div>
+            </div>
+
+            <!-- LEFT COLUMN: Principal Data (30% width) -->
+            <div class="w-[30%] flex flex-col print-exact relative border-r-2 border-dashed border-slate-300 bg-slate-50">
+                <div class="h-2 w-full bg-navy absolute top-0 left-0 print-exact"></div>
+
+                <div class="p-5 flex flex-col h-full">
+                    
+                    <!-- Section Title & Avatar -->
+                    <div class="text-center mb-5 mt-2">
+                        <div class="w-16 h-16 bg-white border-2 border-navy text-navy rounded-full flex items-center justify-center text-3xl mx-auto mb-3 shadow-sm print-exact">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <h2 class="text-sm font-bold text-slate-500 mb-1">بيانات مدير المدرسة</h2>
+                        <h1 id="card-prin-name" class="text-xl font-black text-navy">--</h1>
+                    </div>
+
+                    <!-- Personal & Professional Data List -->
+                    <div class="flex-grow flex flex-col justify-start bg-white rounded-lg border border-slate-200 p-4 shadow-sm print-exact">
+                        
+                        <div class="flex justify-between items-center py-2 border-b border-slate-100">
+                            <span class="text-[10px] text-slate-500 font-bold flex items-center gap-1.5"><i class="fas fa-id-card text-gold w-3"></i> رقم الهوية:</span>
+                            <span id="card-prin-id" class="text-[11px] text-slate-800 font-black tracking-wider">--</span>
+                        </div>
+
+                        <div class="flex justify-between items-center py-2 border-b border-slate-100">
+                            <span class="text-[10px] text-slate-500 font-bold flex items-center gap-1.5"><i class="fas fa-calendar-alt text-gold w-3"></i> تاريخ الميلاد:</span>
+                            <span id="card-prin-dob" class="text-[11px] text-slate-800 font-black">--</span>
+                        </div>
+
+                        <div class="flex justify-between items-center py-2 border-b border-slate-100">
+                            <span class="text-[10px] text-slate-500 font-bold flex items-center gap-1.5"><i class="fas fa-briefcase text-gold w-3"></i> تاريخ التعيين كمدير:</span>
+                            <span id="card-prin-appoint" class="text-[11px] text-slate-800 font-black">--</span>
+                        </div>
+
+                        <div class="flex justify-between items-center py-2 border-b border-slate-100">
+                            <span class="text-[10px] text-slate-500 font-bold flex items-center gap-1.5"><i class="fas fa-history text-gold w-3"></i> سنوات الخبرة:</span>
+                            <span id="card-prin-exp" class="text-[11px] text-slate-800 font-black">--</span>
+                        </div>
+
+                        <div class="flex justify-between items-center py-2 border-b border-slate-100">
+                            <span class="text-[10px] text-slate-500 font-bold flex items-center gap-1.5"><i class="fas fa-door-open text-gold w-3"></i> دخول المدرسة الحالية:</span>
+                            <span id="card-prin-join" class="text-[11px] text-slate-800 font-black">--</span>
+                        </div>
+
+                        <div class="flex justify-between items-center py-2 border-b border-slate-100">
+                            <span class="text-[10px] text-slate-500 font-bold flex items-center gap-1.5"><i class="fas fa-school text-gold w-3"></i> سنوات الخدمة بالمدرسة:</span>
+                            <span id="card-prin-service" class="text-[11px] text-slate-800 font-black">--</span>
+                        </div>
+
+                        <div class="flex justify-between items-center py-2 border-b border-slate-100">
+                            <span class="text-[10px] text-slate-500 font-bold flex items-center gap-1.5"><i class="fas fa-map-marker-alt text-gold w-3"></i> مكان السكن:</span>
+                            <span id="card-prin-residence" class="text-[11px] text-slate-800 font-black text-left">--</span>
+                        </div>
+
+                        <div class="flex justify-between items-center py-2 pt-3 mt-auto">
+                            <span class="text-[10px] text-slate-500 font-bold flex items-center gap-1.5"><i class="fas fa-star text-gold w-3"></i> التقييم:</span>
+                            <span id="card-prin-eval" class="bg-green-100 text-green-800 px-2 py-0.5 rounded text-[11px] font-black border border-green-200">--</span>
+                        </div>
+
+                    </div>
                 </div>
             </div>
 
@@ -300,24 +353,36 @@
     <script>
         // --- Demo Data ---
         const demoData = {
+            // بيانات المدرسة
             "اسم المدرسة": "مدرسة القدس التكنولوجية للإبداع",
             "المديرية": "رام الله والبيرة",
-            "الرؤية": "صناعة جيل مبدع، يمتلك مهارات القرن الحادي والعشرين، منتمٍ لوطنه، وقادر على المنافسة محلياً وعالمياً من خلال بيئة تقنية مستدامة.",
+            "الرؤية": "صناعة جيل مبدع، يمتلك مهارات القرن الـ21، منتمٍ لوطنه، وقادر على المنافسة عبر بيئة تقنية مستدامة.",
             "التصنيف": "A+",
             "عدد الطلاب": "650",
             "الكادر": "48",
             "المختبرات": "2 علوم، 1 FabLab",
-            "مشاريع STEM": "تطبيق 'الزراعة المائية الذكية'، نظام ري آلي متصل بالإنترنت، ومشروع إعادة تدوير البلاستيك بتقنية 3D.",
-            "نادي الابتكار": "تأسيس فريق الروبوت المتقدم، والمشاركة في البطولة الوطنية للروبوت (FLL) وحصد المركز الثاني.",
-            "مؤشر إتقان": "تحقيق نسبة 90% في إتقان المهارات الأساسية للصفوف الدنيا، ومعالجة فاعلة للفاقد التعليمي عبر خطط إثرائية.",
-            "الرقمنة الإدارية": "أتمتة كاملة لسجلات الحضور والغياب، واستخدام لوحات البيانات (Dashboards) لتحليل النتائج بشكل فوري.",
-            "مبادرة قلوب بيضاء": "تنظيم 5 فعاليات شهرية لتعزيز قيم التسامح ونبذ التنمر، وتخصيص 'يوم الكلمة الطيبة' أسبوعياً.",
-            "التوأمة": "شراكة استراتيجية مع جامعة محلية لتدريب الطلبة، وتوأمة مع مدرسة في إسبانيا لتبادل الثقافات.",
-            "الجوائز": "جائزة المدرسة الدولية (ISA)، المركز الأول في مسابقة المعرض العلمي للابتكارات البيئية 2023.",
-            "التعلم المرن": "نجاح باهر في تطبيق التعليم المدمج بنسبة حضور إلكتروني 95%، وتحويل ساحات المدرسة لزوايا تفاعلية.",
+            "مشاريع STEM": "تطبيق 'الزراعة المائية الذكية'، نظام ري آلي متصل بالإنترنت.",
+            "نادي الابتكار": "المشاركة في البطولة الوطنية للروبوت (FLL) وحصد المركز الثاني.",
+            "مؤشر إتقان": "تحقيق 90% في المهارات الأساسية، ومعالجة فاعلة للفاقد التعليمي.",
+            "الرقمنة الإدارية": "أتمتة كاملة للحضور واستخدام لوحات البيانات (Dashboards).",
+            "مبادرة قلوب بيضاء": "5 فعاليات لتعزيز قيم التسامح، وتخصيص 'يوم الكلمة الطيبة'.",
+            "التوأمة": "شراكة مع جامعة محلية وتوأمة مع مدرسة في إسبانيا لتبادل الثقافات.",
+            "الجوائز": "جائزة المدرسة الدولية (ISA)، المركز الأول في المعرض العلمي 2023.",
+            "التعلم المرن": "تعليم مدمج بنسبة حضور 95%، وتحويل الساحات لزوايا تفاعلية.",
             "الهاتف": "02-298XXXX",
             "البريد": "info@quds-tech.edu.ps",
-            "فيسبوك": "facebook.com/QudsTechSchool"
+            "فيسبوك": "facebook.com/QudsTechSchool",
+            
+            // بيانات المدير المضافة
+            "اسم المدير": "أ. أحمد عبد الله المحمود",
+            "رقم الهوية": "987654321",
+            "تاريخ الميلاد": "15/04/1975",
+            "تاريخ التعيين كمدير": "01/09/2010",
+            "سنوات الخبرة": "25 سنة",
+            "تاريخ دخول المدرسة": "01/08/2018",
+            "سنوات الخدمة بالمدرسة": "8 سنوات",
+            "مكان السكن": "رام الله - حي الطيرة",
+            "التقييم": "ممتاز (96%)"
         };
 
         let schoolsData = [];
@@ -367,17 +432,8 @@
             schoolSelect.appendChild(demoOpt);
         }
 
-        schoolSelect.addEventListener('change', (e) => {
-            if (e.target.value === "demo") {
-                loadDemoData();
-            } else {
-                document.getElementById('demo-badge').style.display = 'none';
-                renderCard(schoolsData[e.target.value]);
-            }
-        });
-
         function renderCard(data) {
-            // Helper to find data by keywords
+            // دالة مساعدة للبحث عن البيانات باستخدام الكلمات المفتاحية لتلائم ملفات الإكسل المختلفة
             const get = (keys) => {
                 for (let k of keys) {
                     const found = Object.keys(data).find(key => key.includes(k));
@@ -386,6 +442,7 @@
                 return "--";
             };
 
+            // 1. تعبئة بيانات المدرسة
             document.getElementById('card-school-name').textContent = get(['اسم المدرسة', 'المدرسة']);
             document.getElementById('card-directorate').textContent = get(['المديرية', 'مديرية']);
             document.getElementById('card-vision').textContent = `"${get(['الرؤية', 'رؤية'])}"`;
@@ -411,20 +468,35 @@
             document.getElementById('card-email').textContent = get(['إيميل', 'بريد', 'Email']);
             document.getElementById('card-fb').textContent = get(['فيسبوك', 'Facebook', 'موقع']);
 
-            // QR Code Generation
+            // 2. تعبئة بيانات المدير المضافة
+            document.getElementById('card-prin-name').textContent = get(['اسم المدير', 'المدير']);
+            document.getElementById('card-prin-id').textContent = get(['الهوية', 'رقم هوية']);
+            document.getElementById('card-prin-dob').textContent = get(['تاريخ الميلاد', 'ميلاد']);
+            document.getElementById('card-prin-appoint').textContent = get(['تعيين كمدير', 'تاريخ التعيين']);
+            document.getElementById('card-prin-exp').textContent = get(['الخبرة', 'سنوات الخبرة']);
+            document.getElementById('card-prin-join').textContent = get(['دخول المدرسة', 'الحالية']);
+            document.getElementById('card-prin-service').textContent = get(['الخدمة بالمدرسة', 'سنوات الخدمة']);
+            document.getElementById('card-prin-residence').textContent = get(['السكن', 'مكان السكن', 'العنوان']);
+            document.getElementById('card-prin-eval').textContent = get(['التقييم', 'تقييم']);
+
+            // إنشاء رمز QR Code
             const qrContainer = document.getElementById("qrcode");
             qrContainer.innerHTML = "";
             let fbLink = get(['فيسبوك', 'Facebook', 'موقع']);
-            if (fbLink === "--") fbLink = "https://mohe.pna.ps";
-            else if (!fbLink.startsWith('http')) fbLink = "https://" + fbLink;
             
-            new QRCode(qrContainer, { 
-                text: fbLink, 
-                width: 64, 
-                height: 64,
-                colorDark : "#1e3a8a", // Navy Blue QR Code for elegance
-                colorLight : "#ffffff",
-                correctLevel : QRCode.CorrectLevel.L
+            if (fbLink === "--") {
+                fbLink = "https://mohe.pna.ps";
+            } else if (!fbLink.startsWith('http')) {
+                fbLink = "https://" + fbLink;
+            }
+
+            new QRCode(qrContainer, {
+                text: fbLink,
+                width: 48,
+                height: 48,
+                colorDark: "#1e3a8a",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.L
             });
         }
     </script>

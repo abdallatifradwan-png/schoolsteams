@@ -34,7 +34,7 @@
     </script>
 
     <style>
-        body { background-color: #f1f5f9; margin: 0; padding: 0; }
+        body { background-color: #f1f5f9; margin: 0; padding: 0; overflow-x: hidden; }
         
         @media print {
             @page { size: A4 portrait; margin: 0; }
@@ -62,6 +62,7 @@
                 box-shadow: 0 15px 50px rgba(0,0,0,0.15);
                 display: flex;
                 flex-direction: column;
+                position: relative;
             }
         }
 
@@ -69,6 +70,14 @@
         .data-card { background: #ffffff; border: 1px solid #f1f5f9; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
         .info-label { color: #64748b; font-size: 0.75rem; font-weight: 700; }
         .info-value { color: #1e293b; font-size: 0.9rem; font-weight: 800; }
+        
+        /* ضمان بقاء التذييل في الأسفل */
+        .footer-fixed {
+            margin-top: auto;
+            border-top: 2px solid #f1f5f9;
+            background-color: #f8fafc;
+            padding: 2rem;
+        }
     </style>
 </head>
 <body class="font-sans">
@@ -122,7 +131,7 @@
                     <div class="data-card p-3 rounded-2xl gold-line"><p class="info-label">رقم الهوية</p><p id="card-p-id" class="info-value">--</p></div>
                     <div class="data-card p-3 rounded-2xl gold-line"><p class="info-label">تاريخ الميلاد</p><p id="card-p-dob" class="info-value">--</p></div>
                     <div class="data-card p-3 rounded-2xl gold-line"><p class="info-label">سنوات الخبرة</p><p id="card-p-exp" class="info-value">--</p></div>
-                    <div class="data-card p-3 rounded-2xl gold-line"><p class="info-label">تعيين المدير</p><p id="card-p-appoint" class="info-value">--</p></div>
+                    <div class="data-card p-3 rounded-2xl gold-line"><p class="info-label">تاريخ التعيين</p><p id="card-p-appoint" class="info-value">--</p></div>
                     <div class="data-card p-3 rounded-2xl gold-line"><p class="info-label">دخول المدرسة</p><p id="card-p-join" class="info-value">--</p></div>
                     <div class="data-card p-3 rounded-2xl gold-line"><p class="info-label">خدمة مدرسته</p><p id="card-p-service" class="info-value">--</p></div>
                 </div>
@@ -131,7 +140,7 @@
                     <h3 class="text-xs font-black text-navy mb-2 flex items-center gap-2">
                         <i class="fas fa-award text-gold text-base"></i> السجل التدريبي والدورات
                     </h3>
-                    <p id="card-p-courses" class="text-xs font-bold text-slate-600 leading-relaxed text-justify min-h-[70px]">--</p>
+                    <p id="card-p-courses" class="text-xs font-bold text-slate-600 leading-relaxed text-justify min-h-[60px]">--</p>
                 </div>
             </div>
         </div>
@@ -140,112 +149,112 @@
         <div class="flex-grow flex flex-col p-8 bg-white relative">
             
             <!-- الترويسة المحدثة -->
-            <div class="flex justify-between items-center mb-10 border-b-2 border-slate-50 pb-6">
+            <div class="flex justify-between items-center mb-6 border-b-2 border-slate-50 pb-4">
                 <div class="flex-1">
-                    <p class="text-xs font-black text-slate-400 mb-1">دولة فلسطين</p>
-                    <p class="text-sm font-black text-navy">وزارة التربية والتعليم العالي</p>
-                    <div class="mt-2 inline-block bg-navy text-white px-3 py-1 rounded text-[10px] font-black">
+                    <p class="text-[10px] font-black text-slate-400 mb-1">دولة فلسطين</p>
+                    <p class="text-xs font-black text-navy leading-none">وزارة التربية والتعليم العالي</p>
+                    <div class="mt-2 inline-block bg-navy text-white px-3 py-0.5 rounded text-[9px] font-black">
                         مديرية <span id="card-s-dir">---</span>
                     </div>
                 </div>
                 <div class="flex-1 flex justify-center">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/64/Emblem_of_Palestine.svg" class="w-20 h-24 drop-shadow-md">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/64/Emblem_of_Palestine.svg" class="w-16 h-20 drop-shadow-md">
                 </div>
                 <div class="flex-1 flex justify-end">
-                    <div class="text-center bg-slate-50 p-4 rounded-3xl border border-slate-200">
-                        <p class="text-[10px] font-black text-slate-400 mb-1">تصنيف المدرسة</p>
-                        <p id="card-s-class" class="text-4xl font-black text-navy">--</p>
+                    <div class="text-center bg-slate-50 px-4 py-2 rounded-2xl border border-slate-200">
+                        <p class="text-[9px] font-black text-slate-400">تصنيف المدرسة</p>
+                        <p id="card-s-class" class="text-2xl font-black text-navy">--</p>
                     </div>
                 </div>
             </div>
 
             <!-- اسم المدرسة -->
-            <div class="text-center mb-8">
-                <h1 id="card-s-name" class="text-4xl font-black text-slate-900 mb-2">--</h1>
-                <span class="text-xs font-bold text-navy bg-navy/5 px-4 py-1.5 rounded-full border border-navy/10">
+            <div class="text-center mb-6">
+                <h1 id="card-s-name" class="text-3xl font-black text-slate-900 mb-1">--</h1>
+                <span class="text-[10px] font-bold text-navy bg-navy/5 px-4 py-1 rounded-full border border-navy/10 inline-block">
                     <i class="fas fa-school text-gold ml-1"></i> <span id="card-s-level">--</span>
                 </span>
             </div>
 
             <!-- الإحصائيات -->
-            <div class="grid grid-cols-4 gap-5 mb-10">
-                <div class="bg-navy rounded-3xl p-5 text-center shadow-lg shadow-navy/20">
-                    <i class="fas fa-users text-gold text-xl mb-2"></i>
-                    <p class="text-[10px] text-white/50 font-bold">الطلبة</p>
-                    <p id="card-s-students" class="text-lg font-black text-white">--</p>
+            <div class="grid grid-cols-4 gap-4 mb-6">
+                <div class="bg-navy rounded-2xl p-4 text-center shadow-lg shadow-navy/20">
+                    <i class="fas fa-users text-gold text-lg mb-1"></i>
+                    <p class="text-[9px] text-white/50 font-bold uppercase">الطلبة</p>
+                    <p id="card-s-students" class="text-base font-black text-white">--</p>
                 </div>
-                <div class="bg-white border-2 border-slate-100 rounded-3xl p-5 text-center shadow-sm">
-                    <i class="fas fa-th text-navy text-xl mb-2"></i>
-                    <p class="text-[10px] text-slate-400 font-bold">الشعب</p>
-                    <p id="card-s-sections" class="text-lg font-black text-navy">--</p>
+                <div class="bg-white border-2 border-slate-100 rounded-2xl p-4 text-center shadow-sm">
+                    <i class="fas fa-th text-navy text-lg mb-1"></i>
+                    <p class="text-[9px] text-slate-400 font-bold uppercase">الشعب</p>
+                    <p id="card-s-sections" class="text-base font-black text-navy">--</p>
                 </div>
-                <div class="bg-white border-2 border-slate-100 rounded-3xl p-5 text-center shadow-sm">
-                    <i class="fas fa-building text-navy text-xl mb-2"></i>
-                    <p class="text-[10px] text-slate-400 font-bold">المراكز</p>
-                    <p id="card-s-centers" class="text-lg font-black text-navy">--</p>
+                <div class="bg-white border-2 border-slate-100 rounded-2xl p-4 text-center shadow-sm">
+                    <i class="fas fa-building text-navy text-lg mb-1"></i>
+                    <p class="text-[9px] text-slate-400 font-bold uppercase">المراكز</p>
+                    <p id="card-s-centers" class="text-base font-black text-navy">--</p>
                 </div>
-                <div class="bg-white border-2 border-slate-100 rounded-3xl p-5 text-center shadow-sm overflow-hidden">
-                    <i class="fas fa-laptop text-navy text-xl mb-2"></i>
-                    <p class="text-[10px] text-slate-400 font-bold">تطويرية</p>
-                    <p id="card-s-dev" class="text-[10px] font-black text-navy truncate">--</p>
+                <div class="bg-white border-2 border-slate-100 rounded-2xl p-4 text-center shadow-sm overflow-hidden">
+                    <i class="fas fa-laptop text-navy text-lg mb-1"></i>
+                    <p class="text-[9px] text-slate-400 font-bold uppercase">تطويرية</p>
+                    <p id="card-s-dev" class="text-[9px] font-black text-navy truncate">--</p>
                 </div>
             </div>
 
             <!-- المشاريع -->
-            <div class="space-y-4 mb-auto">
-                <div class="data-card p-6 rounded-3xl border-r-8 border-gold">
-                    <h3 class="text-xs font-black text-navy flex items-center gap-2 mb-2 uppercase tracking-wide">
+            <div class="space-y-3 mb-6">
+                <div class="data-card p-4 rounded-2xl border-r-4 border-gold">
+                    <h3 class="text-[11px] font-black text-navy flex items-center gap-2 mb-1 uppercase tracking-wide">
                         <i class="fas fa-lightbulb text-gold"></i> المشاريع التعليمية والريادية
                     </h3>
-                    <p id="card-s-edu" class="text-xs font-bold text-slate-600 leading-relaxed text-justify">--</p>
+                    <p id="card-s-edu" class="text-[11px] font-bold text-slate-600 leading-relaxed text-justify">--</p>
                 </div>
-                <div class="data-card p-6 rounded-3xl border-r-8 border-navy">
-                    <h3 class="text-xs font-black text-navy flex items-center gap-2 mb-2 uppercase tracking-wide">
+                <div class="data-card p-4 rounded-2xl border-r-4 border-navy">
+                    <h3 class="text-[11px] font-black text-navy flex items-center gap-2 mb-1 uppercase tracking-wide">
                         <i class="fas fa-tools text-gold"></i> مشاريع الترميم والبناء
                     </h3>
-                    <p id="card-s-build" class="text-xs font-bold text-slate-600 leading-relaxed text-justify">--</p>
+                    <p id="card-s-build" class="text-[11px] font-bold text-slate-600 leading-relaxed text-justify">--</p>
                 </div>
             </div>
 
-            <!-- تذييل بيانات الاتصال المحدثة -->
-            <div class="mt-12 pt-8 border-t-2 border-slate-50 flex justify-between items-end">
-                <div class="flex-grow space-y-4">
+            <!-- تذييل بيانات الاتصال (تم التثبيت في الأسفل) -->
+            <div class="footer-fixed flex justify-between items-end mt-auto">
+                <div class="flex-grow space-y-3">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-navy shadow-inner"><i class="fas fa-map-marked-alt text-sm"></i></div>
+                        <div class="w-8 h-8 rounded-lg bg-white shadow-sm border border-slate-100 flex items-center justify-center text-navy"><i class="fas fa-map-marker-alt text-xs"></i></div>
                         <div>
-                            <p class="text-[10px] font-black text-slate-400">موقع المدرسة</p>
-                            <p id="card-s-loc" class="text-xs font-black text-slate-800">--</p>
+                            <p class="text-[8px] font-black text-slate-400 uppercase">موقع المدرسة</p>
+                            <p id="card-s-loc" class="text-[10px] font-black text-slate-800">--</p>
                         </div>
                     </div>
                     
-                    <div class="grid grid-cols-2 gap-x-8 gap-y-3">
-                        <div class="flex items-center gap-3">
-                            <i class="fas fa-phone-alt text-navy text-xs"></i>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-phone-alt text-gold text-[10px]"></i>
                             <div>
-                                <p class="text-[9px] font-black text-slate-400">رقم الهاتف</p>
-                                <p id="card-s-phone" class="text-xs font-black text-slate-800 font-mono">--</p>
+                                <p class="text-[8px] font-black text-slate-400 uppercase">الهاتف الأرضي</p>
+                                <p id="card-s-phone" class="text-[10px] font-black text-slate-800 font-mono leading-none">--</p>
                             </div>
                         </div>
-                        <div class="flex items-center gap-3">
-                            <i class="fas fa-mobile-alt text-navy text-xs"></i>
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-mobile-alt text-gold text-[10px]"></i>
                             <div>
-                                <p class="text-[9px] font-black text-slate-400">رقم الجوال</p>
-                                <p id="card-s-mobile" class="text-xs font-black text-slate-800 font-mono">--</p>
+                                <p class="text-[8px] font-black text-slate-400 uppercase">رقم الجوال</p>
+                                <p id="card-s-mobile" class="text-[10px] font-black text-slate-800 font-mono leading-none">--</p>
                             </div>
                         </div>
-                        <div class="col-span-2 flex items-center gap-3">
-                            <i class="fas fa-envelope text-navy text-xs"></i>
+                        <div class="col-span-2 flex items-center gap-2">
+                            <i class="fas fa-envelope text-gold text-[10px]"></i>
                             <div>
-                                <p class="text-[9px] font-black text-slate-400">البريد الإلكتروني</p>
-                                <p id="card-s-email" class="text-xs font-black text-slate-800 lowercase">school.email@edu.ps</p>
+                                <p class="text-[8px] font-black text-slate-400 uppercase">البريد الإلكتروني</p>
+                                <p id="card-s-email" class="text-[10px] font-black text-slate-800 lowercase leading-none">--</p>
                             </div>
                         </div>
                     </div>
                 </div>
                 
-                <div class="flex flex-col items-center gap-2 bg-slate-50 p-4 rounded-3xl border border-slate-100">
-                    <div id="qrcode" class="bg-white p-2 rounded-xl shadow-sm"></div>
-                    <p class="text-[9px] font-black text-navy/40 tracking-widest uppercase">School Data Scan</p>
+                <div class="flex flex-col items-center gap-1 bg-white p-3 rounded-2xl border border-slate-100 shadow-sm ml-4">
+                    <div id="qrcode"></div>
+                    <p class="text-[7px] font-black text-slate-300 tracking-widest uppercase mt-1">School Digital Card</p>
                 </div>
             </div>
 
@@ -290,22 +299,18 @@
             const file = e.target.files[0];
             const reader = new FileReader();
             reader.onload = (event) => {
-                try {
-                    const workbook = XLSX.read(new Uint8Array(event.target.result), {type: 'array'});
-                    const sheet = workbook.Sheets[workbook.SheetNames[0]];
-                    schoolsData = XLSX.utils.sheet_to_json(sheet, { defval: "" });
-                    
-                    schoolSelect.innerHTML = '<option value="" disabled>-- اختر المدرسة --</option>';
-                    schoolsData.forEach((s, i) => {
-                        const opt = document.createElement('option');
-                        opt.value = i;
-                        opt.textContent = s["اسم المدرسة"] || s["المدرسة"] || `مدرسة ${i+1}`;
-                        schoolSelect.appendChild(opt);
-                    });
-                    if(schoolsData.length > 0) { schoolSelect.value = 0; renderCard(schoolsData[0]); }
-                } catch (err) {
-                    console.error("Excel Read Error:", err);
-                }
+                const workbook = XLSX.read(new Uint8Array(event.target.result), {type: 'array'});
+                const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                schoolsData = XLSX.utils.sheet_to_json(sheet, { defval: "" });
+                
+                schoolSelect.innerHTML = '<option value="" disabled>-- اختر المدرسة --</option>';
+                schoolsData.forEach((s, i) => {
+                    const opt = document.createElement('option');
+                    opt.value = i;
+                    opt.textContent = s["اسم المدرسة"] || s["المدرسة"] || `مدرسة ${i+1}`;
+                    schoolSelect.appendChild(opt);
+                });
+                if(schoolsData.length > 0) { schoolSelect.value = 0; renderCard(schoolsData[0]); }
             };
             reader.readAsArrayBuffer(file);
         });
@@ -324,17 +329,19 @@
                 return "--";
             };
 
+            // بيانات المدير
             document.getElementById('card-p-name').textContent = get(['اسم المدير', 'المدير']);
             document.getElementById('card-p-eval').textContent = get(['تقييمه', 'التقييم']);
             document.getElementById('card-p-id').textContent = get(['رقم هويته', 'الهوية']);
             document.getElementById('card-p-dob').textContent = get(['تاريخ ميلاده', 'ميلاد']);
             document.getElementById('card-p-exp').textContent = get(['سنوات الخبرة', 'الخبرة']);
-            document.getElementById('card-p-appoint').textContent = get(['تعيين المدير', 'تعيين']);
+            document.getElementById('card-p-appoint').textContent = get(['تاريخ التعيين كمدير', 'تعيين']);
             document.getElementById('card-p-join').textContent = get(['دخول المدرسة', 'تاريخ دخول']);
             document.getElementById('card-p-service').textContent = get(['الخدمة في مدرسته', 'الخدمة الحالية']);
             document.getElementById('card-p-residence').textContent = get(['مكان السكن', 'السكن']);
             document.getElementById('card-p-courses').textContent = get(['الدورات التدريبية', 'دورات']);
 
+            // بيانات المدرسة
             document.getElementById('card-s-dir').textContent = get(['المديرية', 'مديرية']);
             document.getElementById('card-s-name').textContent = get(['اسم المدرسة', 'المدرسة']);
             document.getElementById('card-s-class').textContent = get(['تصنيف المدرسة', 'تصنيف']);
@@ -345,39 +352,29 @@
             document.getElementById('card-s-dev').textContent = get(['المراكز التطويرية', 'مرافق']);
             document.getElementById('card-s-edu').textContent = get(['مشاريع تعليمية', 'STEM']);
             document.getElementById('card-s-build').textContent = get(['مشاريع ترميم', 'بناء']);
-            document.getElementById('card-s-loc').textContent = get(['موقع المدرسة', 'الموقع']);
-            document.getElementById('card-s-phone').textContent = get(['هاتف المدرسة', 'هاتف']);
-            document.getElementById('card-s-mobile').textContent = get(['جوال المدرسة', 'جوال']);
-            document.getElementById('card-s-email').textContent = get(['البريد الإلكتروني', 'بريد', 'Email']);
+            
+            // بيانات الاتصال (تأكيد الربط)
+            document.getElementById('card-s-loc').textContent = get(['موقع المدرسة', 'الموقع', 'عنوان المدرسة']);
+            document.getElementById('card-s-phone').textContent = get(['هاتف المدرسة', 'الهاتف', 'رقم الهاتف']);
+            document.getElementById('card-s-mobile').textContent = get(['جوال المدرسة', 'الجوال', 'رقم الجوال']);
+            document.getElementById('card-s-email').textContent = get(['البريد الإلكتروني', 'بريد', 'الإيميل', 'Email']);
 
-            // إصلاح خطأ الـ QR Code عبر تقليل كمية البيانات واستخدام مستوى تصحيح أعلى
+            // QR Code
             const qrContainer = document.getElementById("qrcode");
             qrContainer.innerHTML = "";
+            const qrValue = `School: ${get(['اسم المدرسة'])}\nMobile: ${get(['جوال المدرسة'])}`;
             
-            // نستخدم فقط البيانات الأساسية للـ QR لتجنب تجاوز الطول المسموح
-            const schoolName = get(['اسم المدرسة']);
-            const schoolPhone = get(['هاتف المدرسة']);
-            const qrText = `المدرسة: ${schoolName}\nهاتف: ${schoolPhone}`;
-
             try {
                 new QRCode(qrContainer, {
-                    text: qrText,
-                    width: 75,
-                    height: 75,
+                    text: qrValue,
+                    width: 60,
+                    height: 60,
                     colorDark: "#1e3a8a",
                     colorLight: "#ffffff",
-                    correctLevel: QRCode.CorrectLevel.L // مستوى L يقلل من حجم البيانات في المصفوفة
+                    correctLevel: QRCode.CorrectLevel.M
                 });
             } catch (e) {
-                console.error("QR Code generation failed:", e);
-                // محاولة أخيرة بنص أبسط جداً في حال فشل الأول
-                new QRCode(qrContainer, {
-                    text: schoolName,
-                    width: 75,
-                    height: 75,
-                    colorDark: "#1e3a8a",
-                    colorLight: "#ffffff"
-                });
+                console.error("QR Error", e);
             }
         }
     </script>

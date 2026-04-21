@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>البطاقة التعريفية - وزارة التربية والتعليم العالي</title>
+    <title>البطاقة التعريفية المدرسية</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
@@ -17,16 +17,8 @@
                 extend: {
                     fontFamily: { sans: ['Cairo', 'sans-serif'] },
                     colors: {
-                        navy: {
-                            DEFAULT: '#1e3a8a',
-                            light: '#2563eb',
-                            dark: '#172554'
-                        },
-                        gold: {
-                            DEFAULT: '#d97706',
-                            light: '#f59e0b',
-                            dark: '#b45309'
-                        }
+                        navy: { DEFAULT: '#1e3a8a', light: '#2563eb', dark: '#1e293b' },
+                        gold: { DEFAULT: '#d97706', light: '#f59e0b', dark: '#b45309' }
                     }
                 }
             }
@@ -34,8 +26,9 @@
     </script>
 
     <style>
-        body { background-color: #f1f5f9; margin: 0; padding: 0; overflow-x: hidden; }
+        body { background-color: #f1f5f9; margin: 0; padding: 0; }
         
+        /* إعدادات الطباعة الدقيقة لضمان عدم القطع */
         @media print {
             @page { size: A4 portrait; margin: 0; }
             html, body { height: 100%; margin: 0 !important; padding: 0 !important; overflow: hidden; }
@@ -49,6 +42,7 @@
                 box-shadow: none !important;
                 display: flex !important;
                 flex-direction: column !important;
+                background: white !important;
             }
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         }
@@ -57,204 +51,181 @@
             #printable-card {
                 width: 210mm;
                 height: 297mm;
-                margin: 20px auto;
+                margin: 10px auto;
                 background: white;
-                box-shadow: 0 15px 50px rgba(0,0,0,0.15);
+                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
                 display: flex;
                 flex-direction: column;
-                position: relative;
+                overflow: hidden;
             }
         }
 
-        .gold-line { border-right: 4px solid #d97706; }
-        .data-card { background: #ffffff; border: 1px solid #f1f5f9; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
-        .info-label { color: #64748b; font-size: 0.75rem; font-weight: 700; }
-        .info-value { color: #1e293b; font-size: 0.9rem; font-weight: 800; }
-        
-        /* ضمان بقاء التذييل في الأسفل */
-        .footer-fixed {
-            margin-top: auto;
-            border-top: 2px solid #f1f5f9;
-            background-color: #f8fafc;
-            padding: 2rem;
-        }
+        .data-grid-item { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 1rem; padding: 0.75rem; transition: all 0.2s; }
+        .section-title { font-size: 0.75rem; font-weight: 800; color: #1e3a8a; display: flex; items-center: center; gap: 0.5rem; margin-bottom: 0.5rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.25rem; }
     </style>
 </head>
 <body class="font-sans">
 
-    <!-- شريط المهام العلوي -->
-    <div class="no-print bg-navy-dark text-white p-4 sticky top-0 z-50 flex justify-between items-center shadow-xl">
+    <!-- شريط التحكم -->
+    <div class="no-print bg-navy text-white p-4 sticky top-0 z-50 flex justify-between items-center shadow-lg">
         <div class="flex items-center gap-3">
-            <i class="fas fa-id-card-alt text-gold text-2xl"></i>
-            <h1 class="font-black text-lg">بوابة طباعة البطاقات المدرسية</h1>
+            <i class="fas fa-file-invoice text-gold text-2xl"></i>
+            <h1 class="font-bold">نظام طباعة بطاقات مديري المدارس</h1>
         </div>
-        <div class="flex gap-3">
+        <div class="flex gap-2">
             <input id="excel-file" type="file" class="hidden" accept=".xlsx, .xls" />
             <button onclick="document.getElementById('excel-file').click()" class="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg text-xs font-bold border border-white/20 transition">
-                <i class="fas fa-file-import ml-1"></i> رفع ملف الإكسل
+                <i class="fas fa-upload ml-1"></i> رفع البيانات
             </button>
-            <select id="school-select" class="bg-white text-navy px-4 py-2 rounded-lg text-xs font-bold outline-none ring-2 ring-gold">
-                <option value="demo">-- معاينة النموذج الحالي --</option>
+            <select id="school-select" class="bg-white text-navy px-3 py-2 rounded-lg text-xs font-bold outline-none border-none">
+                <option value="demo">نموذج معاينة</option>
             </select>
-            <button onclick="window.print()" class="bg-gold hover:bg-gold-dark px-6 py-2 rounded-lg text-xs font-bold transition shadow-lg">
-                <i class="fas fa-print ml-1"></i> طباعة البطاقة
+            <button onclick="window.print()" class="bg-gold hover:bg-gold-dark px-6 py-2 rounded-lg text-xs font-bold transition shadow-md">
+                <i class="fas fa-print ml-1"></i> طباعة PDF
             </button>
         </div>
     </div>
 
-    <!-- البطاقة الرئيسية A4 -->
+    <!-- البطاقة A4 -->
     <div id="printable-card">
         
-        <!-- القسم العلوي: المدير -->
-        <div class="p-8 bg-slate-50 relative flex-shrink-0">
-            <div class="absolute top-0 left-0 w-40 h-40 bg-navy/5 rounded-br-full -z-0"></div>
-            
-            <div class="relative z-10 space-y-6">
-                <div class="flex justify-between items-start">
-                    <div class="flex items-center gap-5">
-                        <div class="w-24 h-24 bg-white rounded-3xl shadow-xl flex items-center justify-center border-2 border-navy">
-                            <i class="fas fa-user-tie text-navy text-5xl"></i>
-                        </div>
-                        <div>
-                            <span class="text-[10px] font-black text-gold bg-gold/10 px-2 py-0.5 rounded mb-2 inline-block">مدير المدرسة</span>
-                            <h2 id="card-p-name" class="text-3xl font-black text-navy-dark">--</h2>
-                            <p class="text-xs font-bold text-slate-500 mt-1"><i class="fas fa-map-marker-alt text-gold ml-1"></i> <span id="card-p-residence">--</span></p>
-                        </div>
+        <!-- القسم الأول: بيانات المدير (مساحة محكمة) -->
+        <div class="p-6 bg-slate-50 border-b border-slate-200 relative">
+            <div class="flex justify-between items-start relative z-10">
+                <div class="flex items-center gap-4">
+                    <div class="w-20 h-20 bg-white rounded-2xl shadow-md border-2 border-navy flex items-center justify-center overflow-hidden">
+                        <i class="fas fa-user-tie text-navy text-4xl"></i>
                     </div>
-                    <div class="bg-navy p-4 rounded-3xl shadow-lg border-b-4 border-gold text-center min-w-[120px]">
-                        <p class="text-[10px] text-white/60 font-bold mb-1">التقييم السنوي</p>
-                        <p id="card-p-eval" class="text-xl font-black text-white">--</p>
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                             <span class="bg-navy text-white text-[9px] px-2 py-0.5 rounded-full font-bold">مدير المدرسة</span>
+                             <span id="card-p-eval-badge" class="bg-green-100 text-green-700 text-[9px] px-2 py-0.5 rounded-full font-bold">ممتاز (<span id="card-p-eval">--</span>)</span>
+                        </div>
+                        <h2 id="card-p-name" class="text-2xl font-black text-navy leading-tight">--</h2>
+                        <p class="text-[10px] font-bold text-slate-500"><i class="fas fa-map-marker-alt text-gold ml-1"></i> <span id="card-p-residence">--</span></p>
                     </div>
                 </div>
-
-                <div class="grid grid-cols-3 gap-4">
-                    <div class="data-card p-3 rounded-2xl gold-line"><p class="info-label">رقم الهوية</p><p id="card-p-id" class="info-value">--</p></div>
-                    <div class="data-card p-3 rounded-2xl gold-line"><p class="info-label">تاريخ الميلاد</p><p id="card-p-dob" class="info-value">--</p></div>
-                    <div class="data-card p-3 rounded-2xl gold-line"><p class="info-label">سنوات الخبرة</p><p id="card-p-exp" class="info-value">--</p></div>
-                    <div class="data-card p-3 rounded-2xl gold-line"><p class="info-label">تاريخ التعيين</p><p id="card-p-appoint" class="info-value">--</p></div>
-                    <div class="data-card p-3 rounded-2xl gold-line"><p class="info-label">دخول المدرسة</p><p id="card-p-join" class="info-value">--</p></div>
-                    <div class="data-card p-3 rounded-2xl gold-line"><p class="info-label">خدمة مدرسته</p><p id="card-p-service" class="info-value">--</p></div>
+                <div class="text-left">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/64/Emblem_of_Palestine.svg" class="w-12 h-16 opacity-20">
                 </div>
+            </div>
 
-                <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
-                    <h3 class="text-xs font-black text-navy mb-2 flex items-center gap-2">
-                        <i class="fas fa-award text-gold text-base"></i> السجل التدريبي والدورات
-                    </h3>
-                    <p id="card-p-courses" class="text-xs font-bold text-slate-600 leading-relaxed text-justify min-h-[60px]">--</p>
-                </div>
+            <div class="grid grid-cols-3 gap-3 mt-5">
+                <div class="data-grid-item"><p class="text-[9px] text-slate-400 font-bold mb-1">رقم الهوية</p><p id="card-p-id" class="text-xs font-black text-navy">--</p></div>
+                <div class="data-grid-item"><p class="text-[9px] text-slate-400 font-bold mb-1">تاريخ الميلاد</p><p id="card-p-dob" class="text-xs font-black text-navy">--</p></div>
+                <div class="data-grid-item"><p class="text-[9px] text-slate-400 font-bold mb-1">سنوات الخبرة</p><p id="card-p-exp" class="text-xs font-black text-navy">--</p></div>
+                <div class="data-grid-item"><p class="text-[9px] text-slate-400 font-bold mb-1">تاريخ التعيين كمدير</p><p id="card-p-appoint" class="text-xs font-black text-navy">--</p></div>
+                <div class="data-grid-item"><p class="text-[9px] text-slate-400 font-bold mb-1">دخول المدرسة الحالية</p><p id="card-p-join" class="text-xs font-black text-navy">--</p></div>
+                <div class="data-grid-item"><p class="text-[9px] text-slate-400 font-bold mb-1">سنوات الخدمة بمدرسته</p><p id="card-p-service" class="text-xs font-black text-navy">--</p></div>
+            </div>
+
+            <div class="mt-4 bg-white p-3 rounded-xl border border-slate-200">
+                <h3 class="section-title"><i class="fas fa-graduation-cap"></i> السجل التدريبي والدورات</h3>
+                <p id="card-p-courses" class="text-[10px] font-bold text-slate-600 leading-relaxed">--</p>
             </div>
         </div>
 
-        <!-- القسم السفلي: المدرسة -->
-        <div class="flex-grow flex flex-col p-8 bg-white relative">
+        <!-- القسم الثاني: بيانات المدرسة -->
+        <div class="flex-grow flex flex-col p-6 relative bg-white">
             
-            <!-- الترويسة المحدثة -->
-            <div class="flex justify-between items-center mb-6 border-b-2 border-slate-50 pb-4">
+            <!-- ترويسة الوزارة -->
+            <div class="flex justify-between items-center mb-4 pb-4 border-b border-slate-100">
                 <div class="flex-1">
-                    <p class="text-[10px] font-black text-slate-400 mb-1">دولة فلسطين</p>
-                    <p class="text-xs font-black text-navy leading-none">وزارة التربية والتعليم العالي</p>
-                    <div class="mt-2 inline-block bg-navy text-white px-3 py-0.5 rounded text-[9px] font-black">
-                        مديرية <span id="card-s-dir">---</span>
-                    </div>
+                    <p class="text-[9px] font-bold text-slate-400">دولة فلسطين</p>
+                    <p class="text-[11px] font-black text-navy">وزارة التربية والتعليم العالي</p>
+                    <p class="text-[10px] font-bold text-gold">مديرية <span id="card-s-dir">---</span></p>
                 </div>
                 <div class="flex-1 flex justify-center">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/64/Emblem_of_Palestine.svg" class="w-16 h-20 drop-shadow-md">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/64/Emblem_of_Palestine.svg" class="w-14 h-18">
                 </div>
                 <div class="flex-1 flex justify-end">
-                    <div class="text-center bg-slate-50 px-4 py-2 rounded-2xl border border-slate-200">
-                        <p class="text-[9px] font-black text-slate-400">تصنيف المدرسة</p>
-                        <p id="card-s-class" class="text-2xl font-black text-navy">--</p>
+                    <div class="bg-navy px-4 py-2 rounded-xl text-center border-b-4 border-gold">
+                        <p class="text-[8px] font-bold text-white/60">تصنيف المدرسة</p>
+                        <p id="card-s-class" class="text-xl font-black text-white">--</p>
                     </div>
                 </div>
             </div>
 
             <!-- اسم المدرسة -->
             <div class="text-center mb-6">
-                <h1 id="card-s-name" class="text-3xl font-black text-slate-900 mb-1">--</h1>
-                <span class="text-[10px] font-bold text-navy bg-navy/5 px-4 py-1 rounded-full border border-navy/10 inline-block">
-                    <i class="fas fa-school text-gold ml-1"></i> <span id="card-s-level">--</span>
-                </span>
+                <h1 id="card-s-name" class="text-3xl font-black text-slate-800 mb-1">--</h1>
+                <div class="inline-flex items-center gap-2 bg-slate-50 px-4 py-1 rounded-full border border-slate-200">
+                    <i class="fas fa-school text-gold text-xs"></i>
+                    <span id="card-s-level" class="text-[10px] font-black text-navy">--</span>
+                </div>
             </div>
 
-            <!-- الإحصائيات -->
-            <div class="grid grid-cols-4 gap-4 mb-6">
-                <div class="bg-navy rounded-2xl p-4 text-center shadow-lg shadow-navy/20">
-                    <i class="fas fa-users text-gold text-lg mb-1"></i>
-                    <p class="text-[9px] text-white/50 font-bold uppercase">الطلبة</p>
-                    <p id="card-s-students" class="text-base font-black text-white">--</p>
+            <!-- إحصائيات سريعة -->
+            <div class="grid grid-cols-4 gap-3 mb-6">
+                <div class="bg-navy rounded-2xl p-3 text-center shadow-md">
+                    <i class="fas fa-users text-gold text-sm mb-1"></i>
+                    <p class="text-[8px] text-white/50 font-bold uppercase">الطلبة</p>
+                    <p id="card-s-students" class="text-sm font-black text-white">--</p>
                 </div>
-                <div class="bg-white border-2 border-slate-100 rounded-2xl p-4 text-center shadow-sm">
-                    <i class="fas fa-th text-navy text-lg mb-1"></i>
-                    <p class="text-[9px] text-slate-400 font-bold uppercase">الشعب</p>
-                    <p id="card-s-sections" class="text-base font-black text-navy">--</p>
+                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3 text-center">
+                    <i class="fas fa-layer-group text-navy text-sm mb-1"></i>
+                    <p class="text-[8px] text-slate-400 font-bold uppercase">الشعب</p>
+                    <p id="card-s-sections" class="text-sm font-black text-navy">--</p>
                 </div>
-                <div class="bg-white border-2 border-slate-100 rounded-2xl p-4 text-center shadow-sm">
-                    <i class="fas fa-building text-navy text-lg mb-1"></i>
-                    <p class="text-[9px] text-slate-400 font-bold uppercase">المراكز</p>
-                    <p id="card-s-centers" class="text-base font-black text-navy">--</p>
+                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3 text-center">
+                    <i class="fas fa-landmark text-navy text-sm mb-1"></i>
+                    <p class="text-[8px] text-slate-400 font-bold uppercase">المراكز</p>
+                    <p id="card-s-centers" class="text-sm font-black text-navy">--</p>
                 </div>
-                <div class="bg-white border-2 border-slate-100 rounded-2xl p-4 text-center shadow-sm overflow-hidden">
-                    <i class="fas fa-laptop text-navy text-lg mb-1"></i>
-                    <p class="text-[9px] text-slate-400 font-bold uppercase">تطويرية</p>
-                    <p id="card-s-dev" class="text-[9px] font-black text-navy truncate">--</p>
+                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3 text-center">
+                    <i class="fas fa-flask text-navy text-sm mb-1"></i>
+                    <p class="text-[8px] text-slate-400 font-bold uppercase">تطويرية</p>
+                    <p id="card-s-dev" class="text-[8px] font-black text-navy truncate">--</p>
                 </div>
             </div>
 
             <!-- المشاريع -->
-            <div class="space-y-3 mb-6">
-                <div class="data-card p-4 rounded-2xl border-r-4 border-gold">
-                    <h3 class="text-[11px] font-black text-navy flex items-center gap-2 mb-1 uppercase tracking-wide">
-                        <i class="fas fa-lightbulb text-gold"></i> المشاريع التعليمية والريادية
-                    </h3>
-                    <p id="card-s-edu" class="text-[11px] font-bold text-slate-600 leading-relaxed text-justify">--</p>
+            <div class="space-y-3">
+                <div class="p-4 rounded-2xl bg-slate-50 border-r-4 border-gold shadow-sm">
+                    <h3 class="section-title"><i class="fas fa-lightbulb"></i> المشاريع التعليمية والريادية</h3>
+                    <p id="card-s-edu" class="text-[10px] font-bold text-slate-600 leading-relaxed">--</p>
                 </div>
-                <div class="data-card p-4 rounded-2xl border-r-4 border-navy">
-                    <h3 class="text-[11px] font-black text-navy flex items-center gap-2 mb-1 uppercase tracking-wide">
-                        <i class="fas fa-tools text-gold"></i> مشاريع الترميم والبناء
-                    </h3>
-                    <p id="card-s-build" class="text-[11px] font-bold text-slate-600 leading-relaxed text-justify">--</p>
+                <div class="p-4 rounded-2xl bg-slate-50 border-r-4 border-navy shadow-sm">
+                    <h3 class="section-title"><i class="fas fa-tools"></i> مشاريع الترميم والإنشاءات</h3>
+                    <p id="card-s-build" class="text-[10px] font-bold text-slate-600 leading-relaxed">--</p>
                 </div>
             </div>
 
-            <!-- تذييل بيانات الاتصال (تم التثبيت في الأسفل) -->
-            <div class="footer-fixed flex justify-between items-end mt-auto">
-                <div class="flex-grow space-y-3">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-lg bg-white shadow-sm border border-slate-100 flex items-center justify-center text-navy"><i class="fas fa-map-marker-alt text-xs"></i></div>
-                        <div>
-                            <p class="text-[8px] font-black text-slate-400 uppercase">موقع المدرسة</p>
-                            <p id="card-s-loc" class="text-[10px] font-black text-slate-800">--</p>
-                        </div>
+            <!-- تذييل الصفحة: بيانات الاتصال (تم ضغطه لضمان الظهور) -->
+            <div class="mt-auto pt-4 border-t border-slate-100 flex justify-between items-end">
+                <div class="flex-grow">
+                    <div class="flex items-center gap-2 mb-3">
+                        <i class="fas fa-map-marked-alt text-navy text-xs"></i>
+                        <p id="card-s-loc" class="text-[10px] font-bold text-slate-700">--</p>
                     </div>
-                    
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-2 gap-y-2 gap-x-6">
                         <div class="flex items-center gap-2">
                             <i class="fas fa-phone-alt text-gold text-[10px]"></i>
                             <div>
-                                <p class="text-[8px] font-black text-slate-400 uppercase">الهاتف الأرضي</p>
-                                <p id="card-s-phone" class="text-[10px] font-black text-slate-800 font-mono leading-none">--</p>
+                                <p class="text-[7px] font-bold text-slate-400 uppercase">هاتف</p>
+                                <p id="card-s-phone" class="text-[9px] font-black text-slate-800">--</p>
                             </div>
                         </div>
                         <div class="flex items-center gap-2">
                             <i class="fas fa-mobile-alt text-gold text-[10px]"></i>
                             <div>
-                                <p class="text-[8px] font-black text-slate-400 uppercase">رقم الجوال</p>
-                                <p id="card-s-mobile" class="text-[10px] font-black text-slate-800 font-mono leading-none">--</p>
+                                <p class="text-[7px] font-bold text-slate-400 uppercase">جوال</p>
+                                <p id="card-s-mobile" class="text-[9px] font-black text-slate-800">--</p>
                             </div>
                         </div>
                         <div class="col-span-2 flex items-center gap-2">
                             <i class="fas fa-envelope text-gold text-[10px]"></i>
                             <div>
-                                <p class="text-[8px] font-black text-slate-400 uppercase">البريد الإلكتروني</p>
-                                <p id="card-s-email" class="text-[10px] font-black text-slate-800 lowercase leading-none">--</p>
+                                <p class="text-[7px] font-bold text-slate-400 uppercase">البريد الإلكتروني</p>
+                                <p id="card-s-email" class="text-[9px] font-black text-slate-800">--</p>
                             </div>
                         </div>
                     </div>
                 </div>
                 
-                <div class="flex flex-col items-center gap-1 bg-white p-3 rounded-2xl border border-slate-100 shadow-sm ml-4">
+                <div class="flex flex-col items-center gap-1 bg-slate-50 p-2 rounded-xl border border-slate-200">
                     <div id="qrcode"></div>
-                    <p class="text-[7px] font-black text-slate-300 tracking-widest uppercase mt-1">School Digital Card</p>
+                    <p class="text-[7px] font-bold text-slate-400 tracking-tighter uppercase">Digital Access</p>
                 </div>
             </div>
 
@@ -265,18 +236,18 @@
         const demoData = {
             "المديرية": "القدس الشريف",
             "اسم المدرسة": "مدرسة فلسطين الثانوية للبنين",
-            "مستوى المدرسة": "المرحلة الثانوية - علمي وأدبي",
+            "مستوى المدرسة": "الثانوية العامة - علمي وأدبي",
             "تصنيف المدرسة": "A",
             "عدد الطلبة": "1,050 طالب",
             "عدد الشعب": "28 شعبة",
             "عدد المراكز": "12 مركز",
-            "المراكز التطويرية": "مختبر STEM، مكتبة، حاسوب، لغات",
-            "مشاريع تعليمية": "برنامج STEM للابتكار التعليمي، مبادرة 'مدرستي برمجتي'، ومشروع القراءة التحليلية للمرحلة العليا.",
-            "مشاريع ترميم": "صيانة الساحات العامة، تركيب نظام طاقة شمسية، وتجهيز الغرف الصفية بألواح ذكية.",
+            "المراكز التطويرية": "مختبر STEM، مكتبة، حاسوب",
+            "مشاريع تعليمية": "تطبيق برنامج STEM المتكامل، مبادرة 'مدرستي برمجتي'، ومشروع القراءة التحليلية لتنمية مهارات التفكير الناقد.",
+            "مشاريع ترميم": "صيانة الساحات، تركيب نظام طاقة شمسية، وتجهيز الغرف الصفية بألواح ذكية.",
             "موقع المدرسة": "القدس - شارع صلاح الدين - مقابل البريد",
             "هاتف المدرسة": "02-6543210",
             "جوال المدرسة": "059-8888888",
-            "البريد الإلكتروني": "info@pal-school.edu.ps",
+            "البريد الإلكتروني": "school@edu.ps",
             "اسم المدير": "أ. إبراهيم خليل محمد",
             "رقم هويته": "401234567",
             "تاريخ ميلاده": "12/05/1980",
@@ -285,8 +256,8 @@
             "تاريخ دخول المدرسة الحالية": "20/08/2021",
             "سنوات الخدمة في مدرسته": "3 سنوات",
             "مكان السكن": "القدس - حي بيت حنينا",
-            "الدورات التدريبية": "دبلوم القيادة التربوية، شهادة خبير تكنولوجيا التعليم من مايكروسوفت، دورة التخطيط الاستراتيجي المتطور.",
-            "تقييمه": "97.8% (ممتاز)"
+            "الدورات التدريبية": "دبلوم القيادة التربوية الفاعلة، شهادة خبير تكنولوجيا التعليم، دورة التخطيط الاستراتيجي المتطور.",
+            "تقييمه": "97.8%"
         };
 
         let schoolsData = [];
@@ -329,53 +300,46 @@
                 return "--";
             };
 
-            // بيانات المدير
             document.getElementById('card-p-name').textContent = get(['اسم المدير', 'المدير']);
             document.getElementById('card-p-eval').textContent = get(['تقييمه', 'التقييم']);
             document.getElementById('card-p-id').textContent = get(['رقم هويته', 'الهوية']);
             document.getElementById('card-p-dob').textContent = get(['تاريخ ميلاده', 'ميلاد']);
             document.getElementById('card-p-exp').textContent = get(['سنوات الخبرة', 'الخبرة']);
             document.getElementById('card-p-appoint').textContent = get(['تاريخ التعيين كمدير', 'تعيين']);
-            document.getElementById('card-p-join').textContent = get(['دخول المدرسة', 'تاريخ دخول']);
-            document.getElementById('card-p-service').textContent = get(['الخدمة في مدرسته', 'الخدمة الحالية']);
-            document.getElementById('card-p-residence').textContent = get(['مكان السكن', 'السكن']);
-            document.getElementById('card-p-courses').textContent = get(['الدورات التدريبية', 'دورات']);
+            document.getElementById('card-p-join').textContent = get(['دخول المدرسة', 'دخول']);
+            document.getElementById('card-p-service').textContent = get(['سنوات الخدمة', 'الخدمة']);
+            document.getElementById('card-p-residence').textContent = get(['السكن', 'مكان السكن']);
+            document.getElementById('card-p-courses').textContent = get(['الدورات', 'السجل التدريبي']);
 
-            // بيانات المدرسة
             document.getElementById('card-s-dir').textContent = get(['المديرية', 'مديرية']);
             document.getElementById('card-s-name').textContent = get(['اسم المدرسة', 'المدرسة']);
-            document.getElementById('card-s-class').textContent = get(['تصنيف المدرسة', 'تصنيف']);
+            document.getElementById('card-s-class').textContent = get(['تصنيف', 'التصنيف']);
             document.getElementById('card-s-level').textContent = get(['مستوى المدرسة', 'المستوى']);
-            document.getElementById('card-s-students').textContent = get(['عدد الطلبة', 'الطلبة']);
-            document.getElementById('card-s-sections').textContent = get(['عدد الشعب', 'الشعب']);
-            document.getElementById('card-s-centers').textContent = get(['عدد المراكز', 'المراكز']);
-            document.getElementById('card-s-dev').textContent = get(['المراكز التطويرية', 'مرافق']);
-            document.getElementById('card-s-edu').textContent = get(['مشاريع تعليمية', 'STEM']);
+            document.getElementById('card-s-students').textContent = get(['الطلبة', 'عدد الطلبة']);
+            document.getElementById('card-s-sections').textContent = get(['الشعب', 'عدد الشعب']);
+            document.getElementById('card-s-centers').textContent = get(['المراكز', 'عدد المراكز']);
+            document.getElementById('card-s-dev').textContent = get(['تطويرية', 'المرافق']);
+            document.getElementById('card-s-edu').textContent = get(['مشاريع تعليمية', 'تعليمية']);
             document.getElementById('card-s-build').textContent = get(['مشاريع ترميم', 'بناء']);
-            
-            // بيانات الاتصال (تأكيد الربط)
-            document.getElementById('card-s-loc').textContent = get(['موقع المدرسة', 'الموقع', 'عنوان المدرسة']);
-            document.getElementById('card-s-phone').textContent = get(['هاتف المدرسة', 'الهاتف', 'رقم الهاتف']);
-            document.getElementById('card-s-mobile').textContent = get(['جوال المدرسة', 'الجوال', 'رقم الجوال']);
-            document.getElementById('card-s-email').textContent = get(['البريد الإلكتروني', 'بريد', 'الإيميل', 'Email']);
+            document.getElementById('card-s-loc').textContent = get(['الموقع', 'عنوان']);
+            document.getElementById('card-s-phone').textContent = get(['هاتف', 'الهاتف']);
+            document.getElementById('card-s-mobile').textContent = get(['جوال', 'الجوال']);
+            document.getElementById('card-s-email').textContent = get(['بريد', 'الإيميل', 'Email']);
 
-            // QR Code
+            // QR Code محمي من الانهيار
             const qrContainer = document.getElementById("qrcode");
             qrContainer.innerHTML = "";
-            const qrValue = `School: ${get(['اسم المدرسة'])}\nMobile: ${get(['جوال المدرسة'])}`;
-            
+            const qrText = `School: ${get(['اسم المدرسة'])}\nPrincipal: ${get(['اسم المدير'])}`;
             try {
                 new QRCode(qrContainer, {
-                    text: qrValue,
-                    width: 60,
-                    height: 60,
+                    text: qrText,
+                    width: 55,
+                    height: 55,
                     colorDark: "#1e3a8a",
-                    colorLight: "#ffffff",
-                    correctLevel: QRCode.CorrectLevel.M
+                    colorLight: "#f8fafc",
+                    correctLevel: QRCode.CorrectLevel.L
                 });
-            } catch (e) {
-                console.error("QR Error", e);
-            }
+            } catch (e) {}
         }
     </script>
 </body>
